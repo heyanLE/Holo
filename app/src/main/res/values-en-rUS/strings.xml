@@ -1,0 +1,199 @@
+<resources>
+    <string name="app_name">Belting</string>
+
+    <string name="factory">温州红龙工业设备</string>
+
+    <string name="connecting">connecting……</string>
+    <string name="check_bluetooth">checking communication……</string>
+
+    <string name="please_enter_username">username</string>
+    <string name="please_enter_password">password</string>
+
+    <string name="login">login</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+
+    <string name="point_up">point up</string>
+    <string name="request_located_permission">Please grant location permission before normal use</string>
+
+    <string name="brand">Brand</string>
+    <string name="alias">Alias</string>
+    <string name="product_use">Product use</string>
+    <string name="type">Type</string>
+    <string name="use_i">Use</string>
+    <string name="use_ii">Specifications</string>
+
+    <string name="bluetooth_service_run">Bluetooth service started successfully</string>
+
+    <string name="please_connect_device">Please open the bluetooth and connected devices</string>
+
+    <string name="please_choose">Please select a bluetooth device</string>
+
+    <string name="device_connect">Device connect</string>
+    <string name="enter_to_connect">Binding device</string>
+    <string name="connect">Confirm the connection</string>
+
+    <string name="refresh">Refresh</string>
+    <string name="contact">Contact</string>
+    <string name="my">My</string>
+    <string name="setting">Setting</string>
+    <string name="star">Star</string>
+    <string name="status">Status</string>
+
+    <string name="change_type">Type</string>
+    <string name="operation_report">Report</string>
+    <string name="language">Language</string>
+    
+    <string name="factory_setting">Factory</string>
+    <string name="reboot_system">Reboot system</string>
+    <string name="logout">logout</string>
+
+    <string name="device_id">Device id</string>
+    <string name="track_type">Track type</string>
+    <string name="pressure">pressure(Bar)</string>
+    <string name="upModel_te">up model temperature(°C)</string>
+    <string name="downModel_tem">down model temperature(°C)</string>
+    <string name="upModel_te_no">up model temperature</string>
+    <string name="downModel_tem_no">down model temperature</string>
+    <string name="cooling_te">cooling temperature(°C)</string>
+
+    <string name="soaking_time">soaking time(s)</string>
+    <string name="preheating_preloading_switch">preheating/preloading switch</string>
+    <string name="preloading">preloading(Bar)</string>
+    <string name="preheating_tem">preheating temperature(°C)</string>
+    <string name="preheating_soaking_time">preheating soaking time(s)</string>
+
+    <string name="please_enter_track_type">track type</string>
+
+    <string name="stop_device">Stop</string>
+
+    <string name="please_stop_first">Stop device first</string>
+    <string name="run_device">Run</string>
+    <string name="star_prescription">Star prescription</string>
+    <string name="stared">Stared</string>
+    <string name="have_started">It have also stared</string>
+
+    <string name="load">Load</string>
+    <string name="sure_to_load_this_prescription">Are you sure to load ?</string>
+    
+    <string name="manufacturer">manufacturer</string>
+    <string name="manufacturer_msg">WENZHOU HOLO INDUSTRIAL EQP MFG CO.,LTD</string>
+
+    <string name="address">address</string>
+    <string name="address_msg">1st Floor, Building 3, Xingdong Small and Micro Pioneer Park, Building E, No. 3588, Development Zone Avenue, Ruian City, Zhejiang Province</string>
+
+    <string name="phone">phone number</string>
+    <string name="phone_num">(86)0577–65682000</string>
+    
+    <string name="fax">fax</string>
+    <string name="fax_msg">(86)0577–65916651</string>
+
+    <string name="website">website</string>
+    <string name="website_url">www.18816.cn</string>
+    <string name="website_url_2">www.holobelt.com</string>
+    
+    <string name="facebook">Facebook</string>
+    <string name="facebook_msg">holopress</string>
+    
+    <string name="whats_app">Whats App</string>
+    <string name="whats_app_msg">Levin chen</string>
+    
+    <string name="youtube">You Tube</string>
+    <string name="youtube_msg">holo press</string>
+    
+    <string name="aftermarket_we_chat">WeChat</string>
+
+    <string name="language_time_zone">Lang/TZ</string>
+    <string name="current_language">Current language</string>
+    <string name="current_time_zone">Current time zone</string>
+    <string name="system_time">System time</string>
+
+    <string name="save">save</string>
+
+    <string name="select_language">language</string>
+    
+    <string name="reboot_to_apply">Reboot app to apply</string>
+    
+    <string name="click_to_change">Click to change</string>
+
+    <string name="please_connect_again">Please connect again</string>
+    <string name="to_set">to set</string>
+
+    <string name="sure_to_reboot">重启系统需要1分钟时间，确定要重启吗？</string>
+    <string name="sure_to_logout">确定要退出登录吗</string>
+    
+    <string name="tem_time_graph">Temperature-time graph</string>
+
+    <string name="current_tem">Current temperature</string>
+    <string name="target_tem">target temperature</string>
+
+    <string name="current_pressure">Current pressure</string>
+    <string name="target_pressure">Target pressure</string>
+
+    <string name="other">other</string>
+    <string name="now_task_time">Now task spend</string>
+    <string name="target_soaking_time">Target joint soaking time</string>
+    <string name="target_cooling_tem">Target cooling temperature(°C)</string>
+
+    <string name="report_form">Report</string>
+
+    <string name="look_up">Look up</string>
+    <string name="look_up_report_form">Look up running report</string>
+
+    <string name="sure_to_load_report_form">are you sure to load ?</string>
+    
+    <string name="mainboard_time">Phone time</string>
+    <string name="current_time">Current time</string>
+    <string name="mainboard_tem">Mainboard temperature</string>
+    <string name="disk">Disk</string>
+    <string name="current_ip">current IP</string>
+    <string name="ip">IP</string>
+    <string name="device_type">Device id</string>
+    <string name="customer_id">customer id</string>
+    <string name="customer_name">customer name</string>
+    <string name="set_password">设置密码</string>
+    <string name="please_set_password">请设置密码</string>
+    <string name="network_reset">network reset</string>
+
+    <string name="star_success">star successful</string>
+
+    <string name="run_success">send running command</string>
+
+    <string name="stop_success">send stopping command</string>
+
+    <string name="max">It is too big</string>
+    <string name="min">It is too small</string>
+
+    <string name="max_tem">Max temperature</string>
+    <string name="min_tem">Min temperature</string>
+
+    <string name="max_pressure">Max pressure</string>
+    <string name="min_pressure">Min pressure</string>
+    
+    <string name="mainly_parameters">Mainly parameters</string>
+    <string name="task_time">Task spend</string>
+
+    <string name="right">Please enter the right number</string>
+
+    <string name="report_upload_suc">report uploaded successfully</string>
+    <string name="report_upload_fal">report upload failed</string>
+    <string name="disconnect_please_connect_again">Disconnect, please reconnect</string>
+    <string name="holo_bluetooth_service">Holo Bluetooth Connection Service</string>
+    <string name="bluetooth_connecting">Bluetooth connecting</string>
+    <string name="start_sus">started successfully</string>
+    <string name="star_fal">started failed</string>
+    <string name="total_time">total time</string>
+    <string name="delete_alias_with_empty">delete alia with empty</string>
+    <string name="set_device_alias">set device alias</string>
+    <string name="delete_alias">deleted alias</string>
+    <string name="set_alias">set alias</string>
+    <string name="long_touch_can_set_alias">long touch can set alias</string>
+    <string name="please_open_bluetooth">please open bluetooth</string>
+    <string name="copy_id">copy device id</string>
+    <string name="get_device_msg_fal">get device msg failed</string>
+    <string name="connect_closed">disconnect</string>
+    <string name="conect_sus">connected successfully</string>
+    <string name="please_connect_right_device">please connect right device</string>
+
+</resources>

@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="prescription"
+            type="com.heyanle.holo.entity.Prescription" />
+        <import type="android.view.View" />
+    </data>
+
+    <com.heyanle.holo.ui.view.HoloScroll
+        android:background="#f7f7f8"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:focusableInTouchMode="true"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.cardview.widget.CardView
+                android:layout_margin="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/layout_device_id"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_margin="16dp"
+                            android:textSize="15sp"
+                            android:textColor="@color/black"
+                            android:text="@string/device_id"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/tv_device_id"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:layout_margin="16dp"
+                            android:textSize="15sp"
+                            android:textColor="@color/black"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"/>
+
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:paddingEnd="8dp"
+                        android:paddingStart="8dp"
+                        android:background="#cccccc"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"/>
+
+
+                    <LinearLayout
+
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:textColor="#666666"
+                            android:layout_margin="16dp"
+                            android:textSize="15sp"
+                            android:text="@string/track_type"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"/>
+
+                        <EditText
+                            android:id="@+id/et_trackType"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:layout_margin="16dp"
+                            android:textSize="15sp"
+                            android:textColor="@color/black"
+                            android:text="@={prescription.trackType}"
+                            android:background="@null"
+                            android:hint="@string/please_enter_track_type"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"/>
+
+
+                    </LinearLayout>
+
+
+
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/layout_pressure"
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <View
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="8dp"
+                            android:background="#cccccc"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"/>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_gravity="center"
+                                android:textColor="#666666"
+                                android:layout_margin="16dp"
+                                android:textSize="15sp"
+                                android:text="@string/pressure"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"/>
+
+
+                            <com.heyanle.holo.ui.view.InputBoxFloat
+                                android:id="@+id/input_box_pressure"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                app:num="@{prescription.pressure}"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"/>
+
+
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/layout_upModelTemperature"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="8dp"
+                            android:background="#cccccc"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"/>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:textColor="#666666"
+                                android:layout_margin="16dp"
+                                android:textSize="15sp"
+                                android:text="@string/upModel_te"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"/>
+
+
+                            <com.heyanle.holo.ui.view.InputBox
+                                android:id="@+id/input_box_upModelTemperature"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                app:num="@{prescription.upModelTemperature}"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"/>
+
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/layout_downModelTemperature"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="8dp"
+                            android:background="#cccccc"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"/>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:textColor="#666666"
+                                android:layout_margin="16dp"
+                                android:textSize="15sp"
+                                android:text="@string/downModel_tem"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"/>
+
+
+                            <com.heyanle.holo.ui.view.InputBox
+                                android:id="@+id/input_box_downModelTemperature"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                app:num="@{prescription.downModelTemperature}"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"/>
+
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/layout_coolingTemperature"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="8dp"
+                            android:background="#cccccc"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"/>
+
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:textColor="#666666"
+                                android:layout_margin="16dp"
+                                android:textSize="15sp"
+                                android:text="@string/cooling_te"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"/>
+
+
+                            <com.heyanle.holo.ui.view.InputBox
+                                android:id="@+id/input_box_coolingTemperature"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                app:num="@{prescription.coolingTemperature}"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"/>
+
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/layout_SoakingTime"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="8dp"
+                            android:background="#cccccc"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"/>
+
+                        <LinearLayout
+
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+
+                                android:textColor="#666666"
+                                android:layout_margin="16dp"
+                                android:textSize="15sp"
+                                android:text="@string/soaking_time"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"/>
+
+
+                            <com.heyanle.holo.ui.view.InputBox
+                                android:id="@+id/input_box_soakingTime"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                app:num="@{prescription.soakingTime}"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"/>
+
+
+
+
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/layout_preheatingPreloading"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="8dp"
+                            android:background="#cccccc"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"/>
+
+                        <LinearLayout
+                            android:focusableInTouchMode="true"
+                            android:focusable="true"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:textColor="#666666"
+                                android:layout_margin="16dp"
+                                android:textSize="15sp"
+                                android:text="@string/preheating_preloading_switch"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"/>
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/switch_preheating_preloading"
+                                android:layout_marginEnd="64dp"
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:focusableInTouchMode="true"
+                        android:focusable="true"
+                        android:visibility="gone"
+                        android:id="@+id/layout_preloading"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="8dp"
+                            android:background="#cccccc"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"/>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:textColor="#666666"
+                                android:layout_margin="16dp"
+                                android:textSize="15sp"
+                                android:text="@string/preloading"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"/>
+
+
+                            <com.heyanle.holo.ui.view.InputBoxFloat
+                                android:focusableInTouchMode="true"
+                                android:focusable="true"
+                                android:id="@+id/input_box_preloading"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                app:num="@{prescription.preloading}"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"/>
+
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/layout_preheatingTemperature"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <View
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="8dp"
+                            android:background="#cccccc"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"/>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:textColor="#666666"
+                                android:layout_margin="16dp"
+                                android:textSize="15sp"
+                                android:text="@string/preheating_tem"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"/>
+
+
+                            <com.heyanle.holo.ui.view.InputBox
+                                android:id="@+id/input_box_preheatingTemperature"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                app:num="@{prescription.preheatingTemperature}"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"/>
+
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/layout_preheatingSoakingTime"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingStart="8dp"
+                            android:background="#cccccc"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"/>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:textColor="#666666"
+                                android:layout_margin="16dp"
+                                android:textSize="15sp"
+                                android:text="@string/preheating_soaking_time"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"/>
+
+
+                            <com.heyanle.holo.ui.view.InputBox
+                                android:focusable="true"
+                                android:focusableInTouchMode="true"
+                                android:id="@+id/input_box_preheatingSoakingTime"
+                                android:paddingStart="16dp"
+                                android:paddingEnd="16dp"
+                                app:num="@{prescription.preheatingSoakingTime}"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"/>
+
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+
+
+                    <LinearLayout
+                        android:padding="16dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <Button
+                            android:id="@+id/bt_stop"
+                            android:layout_marginEnd="8dp"
+                            android:textColor="@color/white"
+                            android:text="@string/stop_device"
+                            android:background="@drawable/button_red_background"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"/>
+
+                        <Button
+                            android:id="@+id/bt_run"
+                            android:layout_marginStart="8dp"
+                            android:textColor="@color/white"
+                            android:text="@string/run_device"
+                            android:background="@drawable/button_green_background"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/bt_star"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginStart="16dp"
+                        android:textColor="@color/white"
+                        android:text="@string/star_prescription"
+                        android:background="@drawable/button_blue_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <View
+                        android:focusableInTouchMode="true"
+                        android:focusable="true"
+                        android:background="@color/white"
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+
+
+    </com.heyanle.holo.ui.view.HoloScroll>
+</layout>

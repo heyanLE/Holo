@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="status"
+            type="com.heyanle.holo.entity.ShowStatus" />
+
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:background="#f7f7f8"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_margin="16dp"
+                android:textSize="15sp"
+                android:textColor="#e6212b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_marginStart="16dp"
+                    android:textSize="15sp"
+                    android:text="@string/tem_time_graph"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/total_time"
+                    android:layout_marginEnd="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="16dp"
+                    android:textSize="15sp"
+                    android:text="总时长：00:30:00"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="@string/downModel_tem_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <View
+                    android:layout_margin="4dp"
+                    android:layout_gravity="center"
+                    android:background="#e6212b"
+                    android:layout_width="20dp"
+                    android:layout_height="2dp"/>
+
+                <TextView
+                    android:layout_marginStart="8dp"
+                    android:text="@string/upModel_te_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <View
+                    android:layout_margin="4dp"
+                    android:layout_gravity="center"
+                    android:background="@android:color/black"
+                    android:layout_width="20dp"
+                    android:layout_height="2dp"/>
+
+            </LinearLayout>
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:visibility="gone"
+                android:id="@+id/line_char_new"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"/>
+            <com.heyanle.holo.ui.view.NewLineChartView
+                android:id="@+id/line_char"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"/>
+
+            <androidx.cardview.widget.CardView
+                app:cardCornerRadius="4dp"
+                android:layout_margin="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="15sp"
+                        android:layout_margin="16dp"
+                        android:textColor="@color/black"
+                        android:text="@string/upModel_te"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <View
+                        android:background="#cccccc"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"/>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@string/current_tem"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:textColor="#e6212b"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@{``+status.currentUpTem()}"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                            </LinearLayout>
+
+
+
+                            <View
+                                android:layout_marginTop="16dp"
+                                android:background="#cccccc"
+                                android:layout_marginStart="8dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"/>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_marginBottom="16dp"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@string/target_tem"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:layout_marginBottom="16dp"
+                                    android:textColor="@color/black"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@{``+status.targetUp}"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                            </LinearLayout>
+
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                app:cardCornerRadius="4dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+
+                    <TextView
+                        android:textSize="15sp"
+                        android:layout_margin="16dp"
+                        android:textColor="@color/black"
+                        android:text="@string/downModel_tem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <View
+                        android:background="#cccccc"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"/>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@string/current_tem"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:textColor="#e6212b"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@{``+status.currentDownTem()}"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+                            </LinearLayout>
+
+
+
+                            <View
+                                android:layout_marginTop="16dp"
+                                android:background="#cccccc"
+                                android:layout_marginStart="8dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"/>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_marginBottom="16dp"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@string/target_tem"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:layout_marginBottom="16dp"
+                                    android:textColor="@color/black"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@{``+status.targetDown}"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                            </LinearLayout>
+
+
+
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                app:cardCornerRadius="4dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="15sp"
+                        android:layout_margin="16dp"
+                        android:textColor="@color/black"
+                        android:text="@string/pressure"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <View
+                        android:background="#cccccc"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"/>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@string/current_pressure"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:textColor="#e6212b"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@{``+status.currentPressure()}"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                            </LinearLayout>
+
+
+
+                            <View
+                                android:layout_marginTop="16dp"
+                                android:background="#cccccc"
+                                android:layout_marginStart="8dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"/>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_marginBottom="16dp"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@string/target_pressure"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:layout_marginBottom="16dp"
+                                    android:textColor="@android:color/black"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@{``+status.targetPre}"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                            </LinearLayout>
+
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                app:cardCornerRadius="4dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="15sp"
+                        android:layout_margin="16dp"
+                        android:textColor="@color/black"
+                        android:text="@string/other"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <View
+                        android:background="#cccccc"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"/>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@string/now_task_time"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/tv_worktime"
+                                    android:textColor="#e6212b"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+
+                            </LinearLayout>
+
+
+
+                            <View
+                                android:layout_marginTop="16dp"
+                                android:background="#cccccc"
+                                android:layout_marginStart="8dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"/>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_marginBottom="16dp"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@string/target_soaking_time"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:layout_marginBottom="16dp"
+                                    android:textColor="@color/black"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@{``+status.soakingTime}"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+
+                            </LinearLayout>
+
+
+
+                            <View
+                                android:background="#cccccc"
+                                android:layout_marginStart="8dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"/>
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_marginBottom="16dp"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@string/target_cooling_tem"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:layout_marginBottom="16dp"
+                                    android:textColor="@color/black"
+                                    android:layout_marginTop="16dp"
+                                    android:textSize="15sp"
+                                    android:layout_marginStart="16dp"
+                                    android:text="@{``+status.coolingTem}"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"/>
+
+
+                            </LinearLayout>
+
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+
+
+    </androidx.core.widget.NestedScrollView>
+</layout>

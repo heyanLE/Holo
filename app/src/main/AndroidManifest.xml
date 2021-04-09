@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.heyanle.holo">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"
+        tools:ignore="ProtectedPermissions" />
+
+    <application
+        android:largeHeap="true"
+        android:persistent="true"
+        android:name=".HoloApplication"
+        android:networkSecurityConfig="@xml/network"
+        android:allowBackup="true"
+        android:icon="@mipmap/hhh"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/hhh"
+        android:supportsRtl="true"
+        android:configChanges="locale"
+        android:theme="@style/Theme.Holo" >
+
+        <activity android:name=".ui.activity.FirstActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".crash.CrashActivity" android:process="com.heyanle.holo.crash"/>
+        <activity android:name=".ui.activity.ADActivity"/>
+        <activity android:name=".ui.activity.LoginActivity"/>
+        <activity android:name=".ui.activity.ConnectActivity"/>
+        <activity android:name=".ui.main.MainActivity" android:launchMode="singleTask"/>
+        <activity android:name=".ui.main.activity.LanguageTimeZoneActivity"/>
+        <activity android:name=".ui.main.activity.LanguageActivity"/>
+        <activity android:name=".ui.main.activity.DeviceTypeActivity"/>
+        <activity android:name=".ui.main.activity.ReportFormActivity"/>
+        <activity android:name=".ui.main.activity.ReportFormDisplayActivity"/>
+        <activity android:name=".ui.main.activity.FactorySettingActivity"/>
+
+        <service android:name=".service.BluetoothService"/>
+    </application>
+
+</manifest>

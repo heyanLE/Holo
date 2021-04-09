@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/item_status"
+        android:icon="@drawable/tab_item_status"
+        android:title="@string/status"/>
+
+    <item
+        android:id="@+id/item_star"
+        android:icon="@drawable/tab_item_star"
+        android:title="@string/star"/>
+
+    <item
+        android:id="@+id/item_setting"
+        android:icon="@drawable/tab_item_setting"
+        android:title="@string/setting"/>
+
+    <item
+        android:id="@+id/item_contact"
+        android:icon="@drawable/tab_item_contact"
+        android:title="@string/contact"/>
+
+    <item
+        android:id="@+id/item_my"
+        android:icon="@drawable/tab_item_my"
+        android:title="@string/my"/>
+
+</menu>
