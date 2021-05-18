@@ -7,7 +7,9 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.Lifecycle
 import com.heyanle.holo.HoloApplication
+import com.heyanle.holo.logic.model.TestModel
 import com.heyanle.modbus.ByteUtil
 import com.inuker.bluetooth.library.BluetoothClient
 import com.inuker.bluetooth.library.Code.REQUEST_SUCCESS
@@ -19,6 +21,7 @@ import com.inuker.bluetooth.library.connect.response.BleWriteResponse
 import com.inuker.bluetooth.library.search.SearchRequest
 import com.inuker.bluetooth.library.search.response.SearchResponse
 import java.util.*
+import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.PriorityBlockingQueue
 import java.util.concurrent.TimeUnit
@@ -32,9 +35,12 @@ object BluetoothQueueNew {
 
     var MAC: String = ""
 
+    var last = 0L
+
     abstract class Command:Comparable<Command>{
 
         var addTime = 0L
+        var lifecycle: Lifecycle? = null
 
         abstract fun run()
         var p = 1
@@ -53,16 +59,26 @@ object BluetoothQueueNew {
         }
     }
 
-    class WriteCommand(private val byteArray: ByteArray): Command(){
+    class WriteCommand(val byteArray: ByteArray): Command(){
         override fun run() {
+            if(lifecycle!=null && !lifecycle!!.currentState.isAtLeast(Lifecycle.State.STARTED)){
+                currentCommand = null
+
+                return
+            }
             Log.i("BluetoothQueue", "WriteRun")
+            if(HoloApplication.DEBUG){
+                TestModel.get(byteArray)
+                currentCommand = null
+                return
+            }
             runCatching {
                 bluetoothClient.write(MAC, UUID.fromString(SERVICE_UUID), UUID.fromString(CHARACTERISTIC_UUID) , byteArray
                 ) {
                     Thread{
                         if(it == REQUEST_SUCCESS){
                             var s = 0
-                            val byteArray = ByteArray(byteArray.size)
+                            val byteArray = ByteArray(8)
                             while (s < byteArray.size){
                                 val b = commandByte.poll(1, TimeUnit.SECONDS) ?: break
                                 byteArray[s] = b
@@ -83,7 +99,22 @@ object BluetoothQueueNew {
     open class ReadCommand(val target: Int, val byteA: ByteArray): Command(){
         var onResult:(ByteArray) -> Unit = {}
         override fun run() {
+            if(lifecycle!=null && !lifecycle!!.currentState.isAtLeast(Lifecycle.State.STARTED)){
+                currentCommand = null
+                onResult(ByteArray(8))
+                return
+            }
             Log.i("BluetoothQueue", "ReadRun")
+            if(HoloApplication.DEBUG){
+                val byteArray = TestModel.get(byteA)
+                val real = ByteArray(target)
+                for(i in 3 until 3+ real.size){
+                    real[i-3] = byteArray[i]
+                }
+                onResult(real)
+                currentCommand = null
+                return
+            }
             runCatching {
                 commandByte.clear()
                 bluetoothClient.write(MAC, UUID.fromString(SERVICE_UUID), UUID.fromString(CHARACTERISTIC_UUID) , byteA
@@ -116,7 +147,8 @@ object BluetoothQueueNew {
     }
 
     lateinit var bluetoothClient: BluetoothClient
-    private val commandList = PriorityBlockingQueue<Command>()
+    private val commandList = PriorityQueue<Command>()
+    private val importantCommandList: Queue<Command> = LinkedList<Command>()
     private val commandByte = LinkedBlockingQueue<Byte>()
     var currentCommand: Command? = null
 
@@ -185,31 +217,61 @@ object BluetoothQueueNew {
     }
     fun unNotify(re: BleUnnotifyResponse){}
 
+    @Synchronized
     fun run(){
         if(currentCommand == null) {
-            val f = BluetoothQueueNew.commandList.take()
-            currentCommand = f
-            f.run()
+
+            if(importantCommandList.isNotEmpty()){
+                currentCommand = importantCommandList.poll()!!
+                currentCommand?.run()
+            }else if(commandList.isNotEmpty()){
+                currentCommand = commandList.poll()!!
+                currentCommand?.run()
+            }
         }
     }
 
+    @Synchronized
     fun add(command: Command){
         command.addTime = System.currentTimeMillis()
-        BluetoothQueueNew.commandList.put(command)
+        BluetoothQueueNew.commandList.add(command)
     }
+    @Synchronized
     fun addAll(command : List<Command>){
         for(c in command){
             c.addTime = System.currentTimeMillis()
-            commandList.put(c)
+            commandList.add(c)
         }
     }
+    @Synchronized
     fun addAllN(command : List<Command>){
         for(c in command){
             c.addTime = System.currentTimeMillis()
-            commandList.put(c.apply {
+            commandList.add(c.apply {
                 p = 0
             })
         }
+    }
+
+    @Synchronized
+    fun addI(command: Command){
+        command.addTime = System.currentTimeMillis()
+        importantCommandList.add(command)
+    }
+
+    @Synchronized
+    fun addAllI(command: List<Command>){
+        for(c in command){
+            c.addTime = System.currentTimeMillis()
+            importantCommandList.add(c)
+        }
+    }
+    @Synchronized
+    fun clear(){
+        commandList.clear()
+        importantCommandList.clear()
+        commandByte.clear()
+        currentCommand = null
     }
 
 }

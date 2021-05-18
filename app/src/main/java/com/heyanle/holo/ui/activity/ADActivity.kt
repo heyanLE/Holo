@@ -34,6 +34,7 @@ class ADActivity : BaseActivity(), CoroutineScope by MainScope(){
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         loadAd()
+        
 //        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 //        val clip: ClipData = ClipData.newPlainText("Holo 序列号", "dsfsef")
 //        clipboard.setPrimaryClip(clip)

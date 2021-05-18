@@ -191,12 +191,54 @@
                             android:layout_height="wrap_content"/>
                     </RelativeLayout>
 
+                    <View
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginStart="16dp"
+                        android:background="#cccccc"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"/>
+
+                    <RelativeLayout
+                        android:background="?android:attr/selectableItemBackground"
+                        android:id="@+id/layout_clear_note"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:textSize="15sp"
+                            android:layout_margin="24dp"
+                            android:text="@string/clear_note"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/tv_num_note"
+                            android:textSize="15sp"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/iv_cl_right"
+                            android:textColor="@color/black"
+                            android:text="@string/load_num_of_note"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <ImageView
+                            android:visibility="invisible"
+                            android:layout_margin="16dp"
+                            android:id="@+id/iv_cl_right"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_baseline_chevron_right_24"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </RelativeLayout>
+
                 </LinearLayout>
 
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:visibility="gone"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginTop="8dp"
@@ -240,6 +282,7 @@
                         android:layout_height="1dp"/>
 
                     <RelativeLayout
+                        android:visibility="gone"
                         android:background="?android:attr/selectableItemBackground"
                         android:id="@+id/layout_reboot_system"
                         android:layout_width="match_parent"

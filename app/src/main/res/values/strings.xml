@@ -3,6 +3,8 @@
 
     <string name="factory">温州红龙工业设备</string>
 
+    <string name="bind_shibiehao">绑定序列号</string>
+
     <string name="connecting">连接中……</string>
     <string name="check_bluetooth">检查蓝牙通信……</string>
 
@@ -16,6 +18,7 @@
 
     <string name="point_up">提示</string>
     <string name="request_located_permission">请授予定位权限，之后才可正常使用</string>
+    <string name="realy_to_bind_deviceId">确定要绑定序列号吗？</string>
 
     <string name="brand">品牌&#12288;&#12288;</string>
     <string name="alias">产品别名</string>
@@ -74,6 +77,12 @@
     <string name="stared">已收藏</string>
     <string name="have_started">该配方已经收藏</string>
 
+    <string name="upload_report">上传所选报表</string>
+
+    <string name="load_report_without_upload_from_device">加载设备中未上传的报表</string>
+
+    <string name="please_enter_num_of_report_loaded">请输入报表数</string>
+    <string name="load_report">加载报表</string>
     <string name="load">载入</string>
     <string name="sure_to_load_this_prescription">确认要载入此配方吗？</string>
     
@@ -133,8 +142,10 @@
 
     <string name="other">其他</string>
     <string name="now_task_time">当前任务用时</string>
-    <string name="target_soaking_time">设定接头保温时间</string>
+    <string name="target_soaking_time">设定接头保温时间（S）</string>
     <string name="target_cooling_tem">设定冷却温度（°C）</string>
+
+    <string name="please_select_report">请选择要上传的报表</string>
 
     <string name="report_form">运行报表</string>
 
@@ -174,6 +185,10 @@
     <string name="mainly_parameters">主要参数</string>
     <string name="task_time">任务用时</string>
 
+    <string name="bind_failed">绑定设备失败</string>
+
+    <string name="bind_complete">绑定设备成功，请重启程序</string>
+
     <string name="right">请输入合法的数字</string>
     <string name="report_upload_suc">报表上传成功</string>
     <string name="report_upload_fal">报表上传失败</string>
@@ -194,5 +209,20 @@
     <string name="connect_closed">断开连接</string>
     <string name="conect_sus">连接成功，正在查询设备数据，可直接确认链接</string>
     <string name="please_connect_right_device">请选择正确的蓝牙设备</string>
+
+    <string name="retry">重试</string>
+    
+    <string name="make_report_before">正在生成之前的报表，期间可能指令会不灵敏……</string>
+    <string name="make_report_before_complete">共生成 %1$s 张报表</string>
+
+    <string name="load_num_of_note">加载记录数：%1$s</string>
+    <string name="load_num_of_report">加载报表数：%1$s / %2$s</string>
+    
+    <string name="manual_starting">手动启动</string>
+
+    <string name="note_num">当前记录：%1$s 条</string>
+    <string name="clear_note">清除设备记录</string>
+    <string name="realy_to_clear">确定要清除设备记录吗？</string>
+    <string name="clear_completely">清除记录成功</string>
 
 </resources>

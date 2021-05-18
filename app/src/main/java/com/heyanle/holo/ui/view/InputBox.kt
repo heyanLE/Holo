@@ -157,7 +157,7 @@ class InputBoxFloat :RelativeLayout{
                 return
             }
 
-            field = ((value*100F).toInt())/100F
+            field = (((value+0.005)*100F).toInt())/100F
             onChangeListener()
             binding.tv.text = "$field"
             post {

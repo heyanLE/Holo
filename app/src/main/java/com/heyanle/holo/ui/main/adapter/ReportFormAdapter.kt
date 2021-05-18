@@ -5,6 +5,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.heyanle.holo.databinding.ItemReportFormBinding
 import com.heyanle.holo.entity.Prescription
@@ -16,11 +18,29 @@ import com.heyanle.holo.entity.StatusInfo
  * https://github.com/heyanLE
  */
 
-class ReportFormAdapter(private val list: List<ReportForm>, val context: Context)
-    : RecyclerView.Adapter<ReportITemViewHolder>(){
+class ReportFormAdapter(val context: Context)
+    : PagingDataAdapter<ReportForm, ReportITemViewHolder>(DiffCallback()) {
+
+    private class DiffCallback: DiffUtil.ItemCallback<ReportForm>() {
+        override fun areItemsTheSame(oldItem: ReportForm, newItem: ReportForm): Boolean {
+            return oldItem.endTime == newItem.endTime
+        }
+
+        override fun areContentsTheSame(oldItem: ReportForm, newItem: ReportForm): Boolean {
+            return oldItem.endTime == newItem.endTime
+        }
+    }
 
     var nowIndex = 0
-    var onLoadListener: (Int) -> Unit = {}
+        set(value) {
+            if(field != value){
+                val old = field
+                field = value
+                notifyItemChanged(old)
+                notifyItemChanged(value)
+            }
+        }
+    var onLoadListener: (ReportForm) -> Unit = {}
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReportITemViewHolder {
@@ -28,25 +48,23 @@ class ReportFormAdapter(private val list: List<ReportForm>, val context: Context
                 false))
     }
 
+
+
     override fun onBindViewHolder(holder: ReportITemViewHolder, position: Int) {
-        holder.covert(list[position], position == nowIndex)
+        holder.covert(getItem(position)!!, position == nowIndex)
         holder.itemView.setOnClickListener {
             nowIndex = position
-            notifyDataSetChanged()
+            //notifyDataSetChanged()
         }
         holder.binding.tvLoad.setOnClickListener {
-            onLoadListener(position)
+            onLoadListener(getItem(position)!!)
         }
 
-        if (position == list.size-1){
+        if (position == itemCount-1){
             holder.binding.view.visibility = View.GONE
         }else{
             holder.binding.view.visibility = View.VISIBLE
         }
-    }
-
-    override fun getItemCount(): Int {
-        return list.size
     }
 }
 

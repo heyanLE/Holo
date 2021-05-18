@@ -20,6 +20,14 @@ class DeviceTypeItemAdapter(private val list: List<String>, private val context:
     : RecyclerView.Adapter<DeviceTypeItemViewHolder>(){
 
     var nowIndex = 0
+    set(value) {
+        if(field != value){
+            val old = field
+            field = value
+            notifyItemChanged(old)
+            notifyItemChanged(value)
+        }
+    }
     var onLoadListener: (Int) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceTypeItemViewHolder {
@@ -33,7 +41,6 @@ class DeviceTypeItemAdapter(private val list: List<String>, private val context:
         holder.covert(list[position], position == nowIndex)
         holder.itemView.setOnClickListener {
             nowIndex = position
-            notifyDataSetChanged()
         }
         holder.binding.tvLoad.setOnClickListener {
             onLoadListener(position)
@@ -61,7 +68,7 @@ class DeviceTypeItemViewHolder(val binding: ItemDeviceTypeBinding)
             false
         }
         binding.checkbox.isChecked = isSelect
-        binding.tvLoad.visibility = if(isSelect) View.VISIBLE else View.GONE
+        binding.tvLoad.visibility =  View.GONE
         binding.tvTitle.text = title
     }
 

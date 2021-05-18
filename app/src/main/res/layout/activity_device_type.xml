@@ -36,6 +36,31 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:textColor="#e6212b"
+                            android:background="@null"
+                            android:text="@string/click_to_change"
+                            android:id="@+id/change"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="60dp"/>
+
+                        <Button
+                            android:textColor="#e6212b"
+                            android:background="@null"
+                            android:text="@string/bind_shibiehao"
+                            android:id="@+id/bind"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="60dp"/>
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>

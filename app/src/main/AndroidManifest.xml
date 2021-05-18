@@ -43,6 +43,7 @@
         <activity android:name=".ui.main.activity.ReportFormActivity"/>
         <activity android:name=".ui.main.activity.ReportFormDisplayActivity"/>
         <activity android:name=".ui.main.activity.FactorySettingActivity"/>
+        <activity android:name=".ui.main.activity.LoadReportFormActivity"/>
 
         <service android:name=".service.BluetoothService"/>
     </application>

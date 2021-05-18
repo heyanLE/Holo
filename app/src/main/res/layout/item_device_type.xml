@@ -29,6 +29,7 @@
         android:layout_height="wrap_content"/>
 
     <TextView
+        android:visibility="gone"
         android:background="?android:attr/selectableItemBackground"
         android:id="@+id/tv_load"
         android:padding="16dp"

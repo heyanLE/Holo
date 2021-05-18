@@ -20,6 +20,7 @@ import com.heyanle.holo.service.BluetoothService
 import com.heyanle.holo.ui.view.NewLineChartView
 import com.heyanle.modbus.ByteUtil
 import com.heyanle.modbus.ModbusRtuMaster
+import com.swallowsonny.convertextlibrary.readUInt16BE
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -30,6 +31,8 @@ import kotlin.collections.ArrayList
  */
 
 class HoloApplication : Application(){
+
+
 
     val handler = Handler(Looper.getMainLooper())
 
@@ -49,7 +52,6 @@ class HoloApplication : Application(){
     val prescriptionSetting = MutableLiveData<ArrayList<SettingEntity<*>>>()
 
     val modbusRtuMaster = ModbusRtuMaster()
-
 
     val isClick = MutableLiveData<Boolean>()
 
@@ -94,6 +96,7 @@ class HoloApplication : Application(){
 
     companion object{
         lateinit var INSTANCE: HoloApplication
+        const val DEBUG = false
     }
 
     override fun attachBaseContext(base: Context?) {
@@ -132,11 +135,19 @@ class HoloApplication : Application(){
         LanguageManager.language(this)
 
         currentType.value = "2040"
-        currentPrescription.value = Prescription()
+        currentPrescription.value = Prescription().apply {
+            trackType = SPModel.trackType
+        }
         prescriptionList.value = arrayListOf()
         reportFromList.value = arrayListOf()
         factorySetting.value = FactorySettingInfo()
         deviceDescribe.value = DeviceDescribe()
+
+        token.value = SPModel.token
+        deviceId.value = SPModel.deviceIndex
+
+        isStopClick.value = false
+
         //tem.value = arrayListOf()
         prescriptionSetting.value = arrayListOf()
         status.value = StatusInfo()
@@ -145,23 +156,83 @@ class HoloApplication : Application(){
         runReportForm.value = ReportForm()
         deviceId.value = ""
         isClick.value = false
-        deviceN.value = ""
+        deviceN.value = SPModel.deviceId
         connect.value = false
         isRunClick.value = false
         nowShowStatus.value = ShowStatus()
         realShowStatus.value = ShowStatus()
 
+        currentPrescription.observeForever{
+            SPModel.trackType = it.trackType
+        }
+        deviceN.observeForever {
+            SPModel.deviceId = it
+        }
+        deviceId.observeForever {
+            SPModel.deviceIndex = it
+        }
+
         //ConnectionModel.load()
         Thread.setDefaultUncaughtExceptionHandler(CrashHandler(this))
 
         //Log.i("HoloApplication", modbusRtuMaster.bytes2Hex(modbusRtuMaster.readHoldingRegister(BluetoothService.SLAVE_ADDRESS, 4)))
-        Log.i("HoloApplication", ByteUtil.toHexString(HoloApplication.INSTANCE.modbusRtuMaster
-                .readHoldingRegisters(BluetoothService.SLAVE_ADDRESS, 7,2)))
+//        val z = (1 ushr 16) and 0xFFFF
+//        val o = 1 and 0xFFFF
+//
+//
+//        Log.i("HoloApplication", ByteUtil.toHexString(HoloApplication.INSTANCE.modbusRtuMaster.readHoldingRegisters(
+//                BluetoothService.SLAVE_ADDRESS, 18,2)))
+//
+//        Log.i("HoloApplication", ByteUtil.toHexString(HoloApplication.INSTANCE.modbusRtuMaster
+//                .writeHoldingRegisters(BluetoothService.SLAVE_ADDRESS, 4000,2, intArrayOf(z.toInt(), o.toInt()))))
+//        Log.i("HoloApplication", ByteUtil.toHexString(HoloApplication.INSTANCE.modbusRtuMaster
+//                .readHoldingRegister(BluetoothService.SLAVE_ADDRESS, 4002)))
+//        Log.i("HoloApplication", ByteUtil.toHexString(HoloApplication.INSTANCE.modbusRtuMaster
+//                .readHoldingRegister(BluetoothService.SLAVE_ADDRESS, 4003)))
+//        Log.i("HoloApplication", ByteUtil.toHexString(HoloApplication.INSTANCE.modbusRtuMaster
+//                .readHoldingRegister(BluetoothService.SLAVE_ADDRESS, 4004)))
+//        Log.i("HoloApplication", ByteUtil.toHexString(HoloApplication.INSTANCE.modbusRtuMaster
+//                .readHoldingRegister(BluetoothService.SLAVE_ADDRESS, 4005)))
+//        Log.i("HoloApplication", ByteUtil.toHexString(HoloApplication.INSTANCE.modbusRtuMaster
+//                .readHoldingRegister(BluetoothService.SLAVE_ADDRESS, 4010)))
+
 
         BluetoothQueueNew.init(this)
+
+        if(DEBUG){
+            //BluetoothQueueThread().start()
+        }
+
 
     }
 
 
+    inner class BluetoothQueueThread(): Thread(){
+        var stopFlags = false
+        lateinit var handler: Handler
+        var last = false
+
+        override fun run() {
+            super.run()
+            Looper.prepare()
+
+            handler = Handler(Looper.myLooper()!!)
+            handler.post (object : Runnable{
+                override fun run() {
+                    if(!stopFlags){
+                        runCatching {
+                            BluetoothQueueNew.run()
+                        }
+                        handler.post(this)
+                    }else{
+                        Looper.myLooper()?.quitSafely()
+                    }
+                }
+            })
+
+            Looper.loop()
+
+        }
+    }
 
 }

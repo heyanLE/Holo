@@ -20,7 +20,14 @@ object SPModel {
 
     var token by SP.string("TOKEN","33fd5eb8-f424-4ab2-a315-4a0e70896e70")
 
+    var deviceId by SP.string("DEVICE_ID","")
+    var deviceIndex by SP.string("DEVICE_INDEX","")
+
     var china by SP.int("CHINA",0)
+
+    var lastReportTime by SP.long("LAST_REPORT", -1L)
+
+    var trackType by SP.string("TRACK_TYPE", "")
 
 }
 

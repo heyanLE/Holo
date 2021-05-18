@@ -18,6 +18,14 @@ class StarItemAdapter(private val list: List<Prescription>, val context: Context
     : RecyclerView.Adapter<StarItemViewHolder>(){
 
     var nowIndex = 0
+        set(value) {
+            if(field != value){
+                val old = field
+                field = value
+                notifyItemChanged(old)
+                notifyItemChanged(value)
+            }
+        }
     var onLoadListener: (Int) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StarItemViewHolder {
@@ -29,7 +37,7 @@ class StarItemAdapter(private val list: List<Prescription>, val context: Context
         holder.covert(list[position], position == nowIndex)
         holder.itemView.setOnClickListener {
             nowIndex = position
-            notifyDataSetChanged()
+            //notifyDataSetChanged()
         }
         holder.binding.tvLoad.setOnClickListener {
             onLoadListener(position)

@@ -5,39 +5,32 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.*
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.fragment.app.commit
-import androidx.fragment.app.commitNow
-import androidx.fragment.app.transaction
 import androidx.viewpager2.widget.ViewPager2
 import com.heyanle.holo.HoloApplication
 import com.heyanle.holo.R
 import com.heyanle.holo.databinding.ActivityMainBinding
+import com.heyanle.holo.entity.Notes
 import com.heyanle.holo.entity.Prescription
 import com.heyanle.holo.entity.ReportForm
-import com.heyanle.holo.entity.StatusInfo
+import com.heyanle.holo.entity.ShowStatus
+import com.heyanle.holo.logic.model.ConnectionModel
+import com.heyanle.holo.logic.model.SPModel
 import com.heyanle.holo.logic.viewmodel.MainViewModel
 import com.heyanle.holo.net.DataAdapter
 import com.heyanle.holo.net.HoloRetrofit
+import com.heyanle.holo.service.BluetoothQueueNew
 import com.heyanle.holo.service.BluetoothService
 import com.heyanle.holo.ui.activity.BaseActivity
 import com.heyanle.holo.ui.activity.ConnectActivity
-import com.heyanle.holo.ui.main.activity.ReportFormDisplayActivity
 import com.heyanle.holo.ui.main.adapter.PagerAdapter
 import com.heyanle.holo.ui.main.fragment.*
-import com.heyanle.holo.ui.view.LineChartView
-import com.heyanle.holo.ui.view.NewLineChartView
 import com.heyanle.holo.utils.ViewUtils
-import okhttp3.ResponseBody
-import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Created by HeYanLe on 2021/2/7 0007 13:37.
@@ -98,6 +91,7 @@ class MainActivity : BaseActivity(){
 
 
 
+    var isLoad = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,24 +100,136 @@ class MainActivity : BaseActivity(){
         setSupportActionBar(binding.toolbar)
         ViewUtils.setToolbarCenter(binding.toolbar)
 
-//        HoloApplication.INSTANCE.showReportForm = ReportForm().apply {
-//            endTime = System.currentTimeMillis()
-//            workTime = 43*60
-//            startTime = endTime - workTime*1000
-//            list.add(NewLineChartView.TemData().apply {
-//                time = endTime
-//                upModelTem = 60F
-//                downModelTem = 40F
-//            })
-//            list.add(NewLineChartView.TemData().apply {
-//                time = startTime
-//                upModelTem = 40F
-//                downModelTem = 60F
-//            })
-//        }
-//        val intenti = Intent(this, ReportFormDisplayActivity::class.java)
-//        startActivity(intenti)
-//        return
+        HoloApplication.INSTANCE.connect.observe(this){
+            if(!it){
+                val intent = Intent(this, ConnectActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+        }
+
+        HoloApplication.INSTANCE.prescriptionSetting.observe(this){ list ->
+//            if(list.isEmpty()){
+//                return@observe
+//            }
+//            if(isLoad){
+//                return@observe
+//            }
+//            isLoad = true
+//
+//            // 同步报表
+//            Toast.makeText(HoloApplication.INSTANCE, R.string.make_report_before,Toast.LENGTH_SHORT).show()
+//
+//            val pres: Prescription = Prescription()
+//            BluetoothQueueNew.addAllI(DataAdapter.getReadCommandByPrescription({
+//                pres.trackType = HoloApplication.INSTANCE.getString(R.string.manual_starting)
+//                HoloApplication.INSTANCE.currentPrescription.postValue(pres.copy())
+//
+//                BluetoothQueueNew.addAll(ConnectionModel.readHistNum { num ->
+//                    val buff = arrayListOf<Notes>()
+//
+//                    val num = AtomicInteger(num)
+//                    BluetoothQueueNew.addAllI(ConnectionModel.readAHist(num.get(), object: ConnectionModel.OnReadHistListener{
+//                        override fun onRead(time: Long, up: Float, down: Float, pre: Float, eventType: Int) {
+//
+//                            val node = Notes(time, up, down, pre, eventType)
+//                            buff.add(node)
+//
+//                            if(time > SPModel.lastReportTime && num.get() > 1){
+//                                BluetoothQueueNew.addAllI(ConnectionModel.readAHist(num.decrementAndGet(), this))
+//                            }else{
+//                                BluetoothQueueNew.addAllI(ConnectionModel.check {
+//
+//                                    // 升
+//                                    buff.sortBy { note ->
+//                                        note.time
+//                                    }
+//
+//                                    val reportList = arrayListOf<ReportForm>()
+//                                    var nowReportForm: ReportForm? = null
+//                                    buff.forEach {
+//                                        when (it.eventType) {
+//                                            0x00E3 -> { // 停止
+//                                                nowReportForm?.let { re ->
+//                                                    re.newPre(it.pressure)
+//                                                    re.newTem(it.upTem, it.downTem, it.time)
+//                                                    re.endTime = it.time
+//                                                    re.workTime = it.time - re.startTime
+//                                                    reportList.add(re)
+//                                                    nowReportForm = null
+//                                                }
+//                                            }
+//                                            0x00E2 -> {// 开始
+//                                                nowReportForm = ReportForm()
+//                                                nowReportForm?.let { re ->
+//                                                    re.prescription = pres.copy()
+//                                                    re.deviceType = HoloApplication.INSTANCE.deviceId.value!!
+//                                                    re.newPre(it.pressure)
+//                                                    re.newTem(it.upTem, it.downTem, it.time)
+//                                                    re.startTime = it.time
+//                                                }
+//                                            }
+//                                            else -> {
+//                                                nowReportForm?.let { re ->
+//                                                    re.newPre(it.pressure)
+//                                                    re.newTem(it.upTem, it.downTem, it.time)
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//
+//                                    HoloApplication.INSTANCE.handler.post {
+//                                        Toast.makeText(HoloApplication.INSTANCE,
+//                                                HoloApplication.INSTANCE.getString(R.string.make_report_before_complete,
+//                                                        reportList.size.toString()),Toast.LENGTH_SHORT).show()
+//
+//                                        Thread{
+//                                            var last = 0L
+//                                            runCatching {
+//                                                reportList.forEach {
+//                                                    HoloRetrofit.holoService.uploadData(HoloApplication.INSTANCE.token.value!!,
+//                                                            DataAdapter.getReportFormBody(it)).execute().apply {
+//                                                        body()?.string()?.let { _ ->
+//                                                            last = last.coerceAtLeast(it.endTime)
+//                                                        }
+//                                                    }
+//                                                }
+//                                            }.onSuccess {
+//                                                HoloApplication.INSTANCE.handler.post {
+//                                                    Toast.makeText(HoloApplication.INSTANCE, HoloApplication.INSTANCE.getString(R.string.report_upload_suc),Toast.LENGTH_SHORT).show()
+//                                                    if(!HoloApplication.DEBUG)
+//                                                    SPModel.lastReportTime = SPModel.lastReportTime.coerceAtLeast(last)
+//                                                }
+//                                            }.onFailure {
+//                                                HoloApplication.INSTANCE.handler.post {
+//                                                    Toast.makeText(HoloApplication.INSTANCE, HoloApplication.INSTANCE.getString(R.string.report_upload_fal),Toast.LENGTH_SHORT).show()
+//                                                }
+//                                            }
+//
+//                                        }.start()
+//
+//                                    }
+//
+//
+//
+//
+//                                })
+//                            }
+//
+//                        }
+//                    }))
+//
+//
+//
+//                })
+//
+//            }, list, pres))
+
+
+
+
+        }
 
 
         //binding.navigation.itemIconTintList = null

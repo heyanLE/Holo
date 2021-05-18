@@ -12,6 +12,7 @@ import com.heyanle.holo.HoloApplication
 import com.heyanle.holo.R
 import com.heyanle.holo.databinding.FragmentContactBinding
 import com.heyanle.holo.entity.MsgInfo
+import com.heyanle.holo.language.LanguageManager
 import com.heyanle.holo.logic.viewmodel.MainViewModel
 import com.heyanle.holo.net.HoloRetrofit
 import okhttp3.ResponseBody
@@ -55,7 +56,11 @@ class ContactFragment : PageFragment(R.layout.fragment_contact){
     }
 
     private fun refresh(){
-        HoloRetrofit.holoService.msg().enqueue(object : Callback<ResponseBody>{
+        val map = hashMapOf<String, HashMap<String, String>>()
+        val m = hashMapOf<String, String>()
+        m["FType"] = "${LanguageManager.nowIndex}"
+        map["Data"] = m
+        HoloRetrofit.holoService.msg(map).enqueue(object : Callback<ResponseBody>{
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 runCatching {
                     val s = response.body()!!.string()

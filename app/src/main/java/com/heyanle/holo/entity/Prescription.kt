@@ -18,6 +18,9 @@ data class Prescription(
         var preheatingTemperature: Float = 62F,
         var preheatingSoakingTime: Int = 62,
 ) {
+    
+    
+
 
 
 

@@ -24,6 +24,7 @@ import com.heyanle.holo.databinding.ActivityConnectBinding
 import com.heyanle.holo.databinding.ItemBluetoothDevicesBinding
 import com.heyanle.holo.entity.BusEvent
 import com.heyanle.holo.entity.DeviceDescribe
+import com.heyanle.holo.language.LanguageManager
 import com.heyanle.holo.logic.model.ConnectionModel
 import com.heyanle.holo.logic.model.SPModel
 import com.heyanle.holo.net.DataAdapter
@@ -77,33 +78,29 @@ class ConnectActivity :BaseActivity(){
             }
             onItemLongClick = { p ->
 
-                if(SPModel.username == "admin"){
-                    Toast.makeText(this@ConnectActivity, getString(R.string.delete_alias_with_empty),Toast.LENGTH_SHORT).show()
-                    val editDialog = EditDialog(this@ConnectActivity)
-                    editDialog.show()
-                    editDialog.binding.tvTitle.text = getString(R.string.set_device_alias)
-                    editDialog.binding.etMsg.setText(addressMap[bluetoothDevices[p].address]?:"")
-                    editDialog.binding.tvConfirm.setOnClickListener {
-                        if(editDialog.binding.etMsg.text.isEmpty()){
-                            addressMap.remove(bluetoothDevices[p].address)
-                            val s = Gson().toJson(addressMap)
-                            SPModel.addressMap = s
-                            bluetoothAdapter.notifyDataSetChanged()
-                            Toast.makeText(this@ConnectActivity, getString(R.string.delete_alias),Toast.LENGTH_SHORT).show()
-                            editDialog.dismiss()
-                        }else{
-                            addressMap[bluetoothDevices[p].address] = editDialog.binding.etMsg.text.toString()
-                            val s = Gson().toJson(addressMap)
-                            SPModel.addressMap = s
-                            Toast.makeText(this@ConnectActivity, getString(R.string.set_alias),Toast.LENGTH_SHORT).show()
-                            bluetoothAdapter.notifyDataSetChanged()
-                            editDialog.dismiss()
-                        }
+                Toast.makeText(this@ConnectActivity, getString(R.string.delete_alias_with_empty),Toast.LENGTH_SHORT).show()
+                val editDialog = EditDialog(this@ConnectActivity)
+                editDialog.show()
+                editDialog.binding.tvTitle.text = getString(R.string.set_device_alias)
+                editDialog.binding.etMsg.setText(addressMap[bluetoothDevices[p].address]?:"")
+                editDialog.binding.tvConfirm.setOnClickListener {
+                    if(editDialog.binding.etMsg.text.isEmpty()){
+                        addressMap.remove(bluetoothDevices[p].address)
+                        val s = Gson().toJson(addressMap)
+                        SPModel.addressMap = s
+                        bluetoothAdapter.notifyDataSetChanged()
+                        Toast.makeText(this@ConnectActivity, getString(R.string.delete_alias),Toast.LENGTH_SHORT).show()
+                        editDialog.dismiss()
+                    }else{
+                        addressMap[bluetoothDevices[p].address] = editDialog.binding.etMsg.text.toString()
+                        val s = Gson().toJson(addressMap)
+                        SPModel.addressMap = s
+                        Toast.makeText(this@ConnectActivity, getString(R.string.set_alias),Toast.LENGTH_SHORT).show()
+                        bluetoothAdapter.notifyDataSetChanged()
+                        editDialog.dismiss()
                     }
-                    true
-                }else{
-                    false
                 }
+                true
             }
         }
     }
@@ -130,9 +127,7 @@ class ConnectActivity :BaseActivity(){
                     if(msg.arg1 == 1) {
                         map.clear()
                         dialog.show()
-                        if(SPModel.username == "admin"){
-                            Toast.makeText(this@ConnectActivity, getString(R.string.long_touch_can_set_alias), Toast.LENGTH_SHORT).show()
-                        }
+                        Toast.makeText(this@ConnectActivity, getString(R.string.long_touch_can_set_alias), Toast.LENGTH_SHORT).show()
                     }else{
                         dialog.dismiss()
                         Toast.makeText(this@ConnectActivity, getString(R.string.please_open_bluetooth), Toast.LENGTH_SHORT).show()
@@ -162,7 +157,7 @@ class ConnectActivity :BaseActivity(){
 
                 }
                 BluetoothService.MSG_WHAT_START_QUEUE -> {
-                    Toast.makeText(this@ConnectActivity, "发送获取序列号指令",Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this@ConnectActivity, "发送获取序列号指令",Toast.LENGTH_SHORT).show()
                     val read = BluetoothQueueNew.ReadCommand(16,HoloApplication.INSTANCE.modbusRtuMaster
                             .readHoldingRegisters(BluetoothService.SLAVE_ADDRESS, 2013, 8))
                     read.onResult = {
@@ -173,13 +168,15 @@ class ConnectActivity :BaseActivity(){
                             val clip: ClipData = ClipData.newPlainText("Holo 序列号", d)
                             clipboard.setPrimaryClip(clip)
 
-                            Toast.makeText(this@ConnectActivity, "${getString(R.string.copy_id)}：${d}",Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(this@ConnectActivity, "${getString(R.string.copy_id)}：${d}",Toast.LENGTH_SHORT).show()
                         }
                         HoloApplication.INSTANCE.deviceN.postValue(d)
+
 
                         val map = hashMapOf<String, HashMap<String, String>>()
                         val m = hashMapOf<String, String>()
                         m["shibiehao"] = d
+                        m["FType"] = "${LanguageManager.nowIndex}"
                         map["Data"] = m
                         HoloRetrofit.holoService.machine(HoloApplication.INSTANCE.token.value!!, map).enqueue(object: retrofit2.Callback<ResponseBody>{
                             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -191,10 +188,17 @@ class ConnectActivity :BaseActivity(){
                                         Toast.makeText(this@ConnectActivity, getString(R.string.get_device_msg_fal),Toast.LENGTH_SHORT).show()
                                         return
                                     }
-                                    val js = jsonObject.getJSONObject("Data")
-                                    HoloApplication.INSTANCE.deviceId.postValue(js.getString("FNumber"))
-                                    HoloApplication.INSTANCE.deviceDescribe.postValue(DataAdapter.getDeviceDescribe(js))
-                                    HoloApplication.INSTANCE.prescriptionSetting.postValue(DataAdapter.getSettingArray(js.getJSONArray("MachingUnit")))
+                                    if(jsonObject.getString("Data") == "无数据"){
+
+                                    }else{
+                                        val js = jsonObject.getJSONObject("Data")
+                                        HoloApplication.INSTANCE.deviceId.postValue(js.getString("FNumber"))
+                                        HoloApplication.INSTANCE.deviceDescribe.postValue(DataAdapter.getDeviceDescribe(js))
+                                        HoloApplication.INSTANCE.prescriptionSetting.postValue(DataAdapter.getSettingArray(js.getJSONArray("MachingUnit")))
+
+                                    }
+
+
 
                                 }
                                 .onFailure {
@@ -269,6 +273,12 @@ class ConnectActivity :BaseActivity(){
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        if(LanguageManager.nowIndex == 1){
+            HoloApplication.INSTANCE.deviceDescribe.value?.apply {
+                HoloApplication.INSTANCE.deviceDescribe.value = this
+            }
+        }
+
         setSupportActionBar(binding.toolbar)
         ViewUtils.setToolbarCenter(binding.toolbar)
         //EventBus.getDefault().register(this)
@@ -288,6 +298,12 @@ class ConnectActivity :BaseActivity(){
     override fun onStart() {
         super.onStart()
 
+        if(HoloApplication.DEBUG){
+            binding.btTest.visibility = View.VISIBLE
+        }else{
+            binding.btTest.visibility = View.GONE
+        }
+
         binding.device = HoloApplication.INSTANCE.deviceDescribe.value
         HoloApplication.INSTANCE.deviceDescribe.observe(this){
             binding.device = it
@@ -299,11 +315,12 @@ class ConnectActivity :BaseActivity(){
         }
 
         binding.btTest.setOnClickListener {
-            HoloApplication.INSTANCE.deviceN.postValue("0a 0b 0d 0f 0b 36 1f 26 00 00 3f 21 ff ff b1 ff")
+            HoloApplication.INSTANCE.deviceN.postValue("123")
 
             val map = hashMapOf<String, HashMap<String, String>>()
             val m = hashMapOf<String, String>()
-            m["shibiehao"] = "0a 0b 0d 0f 0b 36 1f 26 00 00 3f 21 ff ff b1 ff"
+            m["shibiehao"] = "123"
+            m["FType"] = "${LanguageManager.nowIndex}"
             map["Data"] = m
             HoloRetrofit.holoService.machine(HoloApplication.INSTANCE.token.value!!, map).enqueue(object: retrofit2.Callback<ResponseBody>{
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -319,9 +336,13 @@ class ConnectActivity :BaseActivity(){
                         HoloApplication.INSTANCE.deviceId.postValue(js.getString("FNumber"))
                         HoloApplication.INSTANCE.deviceDescribe.postValue(DataAdapter.getDeviceDescribe(js))
                         HoloApplication.INSTANCE.prescriptionSetting.postValue(DataAdapter.getSettingArray(js.getJSONArray("MachingUnit")))
-                        val intent = Intent(this@ConnectActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
+                        runOnUiThread{
+                            HoloApplication.INSTANCE.connect.value = true
+                            val intent = Intent(this@ConnectActivity, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+
                     }
                             .onFailure {
                                 Toast.makeText(this@ConnectActivity, getString(R.string.get_device_msg_fal),Toast.LENGTH_SHORT).show()

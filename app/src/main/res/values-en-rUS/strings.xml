@@ -3,8 +3,15 @@
 
     <string name="factory">温州红龙工业设备</string>
 
+    <string name="bind_shibiehao">bind device id</string>
+
     <string name="connecting">connecting……</string>
     <string name="check_bluetooth">checking communication……</string>
+    <string name="bind_failed">bind failed</string>
+
+    <string name="bind_complete">bind device completely, please reboot app</string>
+
+    <string name="realy_to_bind_deviceId">Are you sure to bind device id ?</string>
 
     <string name="please_enter_username">username</string>
     <string name="please_enter_password">password</string>
@@ -74,6 +81,11 @@
     <string name="stared">Stared</string>
     <string name="have_started">It have also stared</string>
 
+    <string name="upload_report">upload selected report</string>
+    <string name="load_report_without_upload_from_device">Loading report not uploaded from device</string>
+
+    <string name="please_enter_num_of_report_loaded">The num of report will load</string>
+    <string name="load_report">Load Report</string>
     <string name="load">Load</string>
     <string name="sure_to_load_this_prescription">Are you sure to load ?</string>
     
@@ -133,8 +145,10 @@
 
     <string name="other">other</string>
     <string name="now_task_time">Now task spend</string>
-    <string name="target_soaking_time">Target joint soaking time</string>
+    <string name="target_soaking_time">Target joint soaking time(S)</string>
     <string name="target_cooling_tem">Target cooling temperature(°C)</string>
+
+    <string name="please_select_report">Please select the report to upload</string>
 
     <string name="report_form">Report</string>
 
@@ -195,5 +209,20 @@
     <string name="connect_closed">disconnect</string>
     <string name="conect_sus">connected successfully</string>
     <string name="please_connect_right_device">please connect right device</string>
+
+    <string name="retry">retry</string>
+
+    <string name="make_report_before">making report before</string>
+    <string name="make_report_before_complete">make %1$s report</string>
+
+    <string name="load_num_of_note">load num of note：%1$s</string>
+    <string name="load_num_of_report">load num of report：%1$s / %2$s</string>
+
+    <string name="manual_starting">manual starting</string>
+
+    <string name="note_num">Num of notes：%1$s </string>
+    <string name="clear_note">clear note in device</string>
+    <string name="realy_to_clear">Are you sure to clear note?</string>
+    <string name="clear_completely">completely</string>
 
 </resources>

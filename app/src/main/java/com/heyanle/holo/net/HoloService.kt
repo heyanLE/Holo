@@ -7,11 +7,15 @@ import retrofit2.http.*
 
 interface HoloService {
 
+    @POST("/api/Post/UpdateMaching")
+    fun bind(@Header("Token") token: String,@Body hashMap: HashMap<String, HashMap<String,String>>): Call<ResponseBody>
+
+
     @POST("/api/Delete/Star")
     fun delete(@Header("Token") token: String,@Body hashMap: HashMap<String, HashMap<String,String>>):Call<ResponseBody>
 
     @POST("/api/Get/IndexBody")
-    fun msg():Call<ResponseBody>
+    fun msg(@Body hashMap: HashMap<String, HashMap<String,String>>):Call<ResponseBody>
 
     @POST("/api/Get/guanggao")
     fun ad(@Header("Token") token: String,@Body hashMap: HashMap<String, HashMap<String,String>>): Call<ResponseBody>
@@ -20,7 +24,7 @@ interface HoloService {
     fun login(@Body hashMap: HashMap<String, HashMap<String,String>>): Call<ResponseBody>
 
     @POST("/api/Post/SignOut")
-    fun logout(@Body hashMap: HashMap<String, HashMap<String,String>>): Call<ResponseBody>
+    fun logout(@Header("Token") token: String): Call<ResponseBody>
 
     @POST("/api/Get/UserMaching")
     fun getUserMachine(@Header("Token") token: String):Call<ResponseBody>

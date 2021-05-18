@@ -2,6 +2,7 @@ package com.heyanle.holo.service
 
 import android.app.Service
 import android.content.Intent
+import android.os.Handler
 import android.os.IBinder
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -21,6 +22,8 @@ abstract class BaseService : Service(), LifecycleOwner {
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
         mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+
+        //Handler
     }
 
     override fun onDestroy() {

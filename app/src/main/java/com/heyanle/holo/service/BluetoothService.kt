@@ -5,11 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.bluetooth.*
-import android.bluetooth.BluetoothDevice.DEVICE_TYPE_LE
-import android.bluetooth.BluetoothGatt.GATT_SUCCESS
 import android.bluetooth.le.BluetoothLeScanner
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -18,17 +14,17 @@ import android.os.*
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.Observer
 import com.heyanle.holo.HoloApplication
 import com.heyanle.holo.R
 import com.heyanle.holo.entity.Prescription
 import com.heyanle.holo.entity.ReportForm
 import com.heyanle.holo.entity.ShowStatus
 import com.heyanle.holo.logic.model.ConnectionModel
+import com.heyanle.holo.logic.model.SPModel
 import com.heyanle.holo.net.DataAdapter
 import com.heyanle.holo.net.HoloRetrofit
 import com.heyanle.holo.ui.main.MainActivity
-import com.heyanle.modbus.ByteUtil
+import com.heyanle.holo.ui.main.activity.LoadReportFormActivity
 import com.inuker.bluetooth.library.Code.REQUEST_SUCCESS
 import com.inuker.bluetooth.library.connect.listener.BluetoothStateListener
 import com.inuker.bluetooth.library.connect.response.BleConnectResponse
@@ -165,6 +161,7 @@ class BluetoothService : Service(){
 
                 }
                 MSG_WHAT_START_QUEUE -> {
+                    BluetoothQueueNew.clear()
                     bluetoothQueueThread = BluetoothQueueThread()
                     bluetoothQueueThread?.stopFlags = false
                     bluetoothQueueThread?.start()
@@ -363,6 +360,8 @@ class BluetoothService : Service(){
                         runCatching {
                             val command = msg.obj as List<BluetoothQueueNew.Command>
                             BluetoothQueueNew.addAll(command)
+                        }.onFailure {
+                            it.printStackTrace()
                         }
                     }
                 }
@@ -401,29 +400,11 @@ class BluetoothService : Service(){
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-
         return super.onUnbind(intent)
     }
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val builder = NotificationCompat.Builder(this, "holo_service")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel("holo_service", getString(R.string.holo_bluetooth_service),
-                    NotificationManager.IMPORTANCE_DEFAULT)
-            manager.createNotificationChannel(channel)
-        }
-        val int = Intent(this, MainActivity::class.java)
-        val pi = PendingIntent.getActivity(this, 0, int, 0)
-        builder.setContentTitle("Holo")
-                .setContentText(getString(R.string.bluetooth_connecting))
-                .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentIntent(pi)
-        startForeground(1000, builder.build())
-
-
-
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -433,10 +414,60 @@ class BluetoothService : Service(){
             if(!openOrClosed){
                 HoloApplication.INSTANCE.handler.post {
                     Toast.makeText(HoloApplication.INSTANCE, getString(R.string.disconnect_please_connect_again),Toast.LENGTH_SHORT).show()
+                    runCatching {
+                        bluetoothQueueThread = null
+                        bluetoothThread = null
+                    }
                     HoloApplication.INSTANCE.connect.postValue(false)
+                    runCatching {
+                        HoloApplication.INSTANCE.handler.post {
+                            runCatching {
+                                stopForeground(true)
+                            }
+
+                        }
+                        stopForeground(true)
+                    }
+
                 }
             }else{
                 HoloApplication.INSTANCE.connect.postValue(true)
+                runCatching {
+                    HoloApplication.INSTANCE.handler.post {
+                        runCatching {
+                            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                            val builder = NotificationCompat.Builder(this@BluetoothService, "holo_service")
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                val channel = NotificationChannel("holo_service", getString(R.string.holo_bluetooth_service),
+                                    NotificationManager.IMPORTANCE_DEFAULT)
+                                manager.createNotificationChannel(channel)
+                            }
+                            val int = Intent(this@BluetoothService, MainActivity::class.java)
+                            val pi = PendingIntent.getActivity(this@BluetoothService, 0, int, 0)
+                            builder.setContentTitle("Holo")
+                                .setContentText(getString(R.string.bluetooth_connecting))
+                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setContentIntent(pi)
+                            startForeground(1000, builder.build())
+                        }
+                    }
+                    val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                    val builder = NotificationCompat.Builder(this@BluetoothService, "holo_service")
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        val channel = NotificationChannel("holo_service", getString(R.string.holo_bluetooth_service),
+                            NotificationManager.IMPORTANCE_DEFAULT)
+                        manager.createNotificationChannel(channel)
+                    }
+                    val int = Intent(this@BluetoothService, MainActivity::class.java)
+                    val pi = PendingIntent.getActivity(this@BluetoothService, 0, int, 0)
+                    builder.setContentTitle("Holo")
+                        .setContentText(getString(R.string.bluetooth_connecting))
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentIntent(pi)
+                    startForeground(1000, builder.build())
+
+                }
+
             }
         }
     }
@@ -460,146 +491,162 @@ class BluetoothService : Service(){
 
     inner class BluetoothCheckThread(): Thread(){
         var stopFlags = false
+        lateinit var handler: Handler
         var delay = 2000
         override fun run() {
             super.run()
-            while(!stopFlags){
+            Looper.prepare()
+            handler = Handler(Looper.myLooper()!!)
+            handler.post(object: Runnable{
+                override fun run() {
+                    if(LoadReportFormActivity.IS_LOAD){
+                        handler.post(this)
+                        return
+                    }
+                    runCatching {
+                        BluetoothQueueNew.addAll(ConnectionModel.check { it ->
 
-                BluetoothQueueNew.addAll(ConnectionModel.check { it ->
+                            val last = HoloApplication.INSTANCE.nowDeviceRun.value!!
+                            if(last != it){
+                                if(it){
+                                    HoloApplication.INSTANCE.isStopClick.postValue(false)
+                                    HoloApplication.INSTANCE.nowDeviceRun.postValue(it)
+                                    if(!HoloApplication.INSTANCE.isRunClick.value!!){
 
-                    val last = HoloApplication.INSTANCE.nowDeviceRun.value!!
-                    if(last != it){
-                        if(it){
-
-                            HoloApplication.INSTANCE.isStopClick.postValue(false)
-                            HoloApplication.INSTANCE.nowDeviceRun.postValue(it)
-                            if(!HoloApplication.INSTANCE.isRunClick.value!!){
-
-                                HoloApplication.INSTANCE.handler.post {
-                                    HoloApplication.INSTANCE.nowShowStatus.value = ShowStatus()
-                                    val prescription = Prescription()
-                                    var title = HoloApplication.INSTANCE.currentPrescription.value!!.trackType
-                                    if(title.isEmpty()){
-                                        title = "手动启动"
-                                    }
-                                    BluetoothQueueNew.addAll(DataAdapter.getReadCommandByPrescription({
-                                        HoloApplication.INSTANCE.currentPrescription.postValue(prescription.apply {
-                                            trackType = title
-                                            HoloApplication.INSTANCE.nowShowStatus.postValue(ShowStatus())
-                                        })
-                                    }, HoloApplication.INSTANCE.prescriptionSetting.value!!, prescription.apply {
-                                        trackType = title
-                                    }))
-
-                                    BluetoothQueueNew.addAll(ConnectionModel.status())
-                                }
-                            }
-                        }else{
-                            HoloApplication.INSTANCE.isRunClick.postValue(false)
-                            HoloApplication.INSTANCE.nowDeviceRun.postValue(it)
-
-                            if(!HoloApplication.INSTANCE.isStopClick.value!!){
-                                // 生成报表
-
-                                val title = HoloApplication.INSTANCE.currentPrescription.value!!.trackType
-                                // 同步配方
-                                val prescription = HoloApplication.INSTANCE.currentPrescription.value!!.copy()
-                                BluetoothQueueNew.addAll(ConnectionModel.status())
-                                BluetoothQueueNew.addAll(DataAdapter.getReadCommandByPrescription({
-                                    HoloApplication.INSTANCE.handler.post {
-                                        HoloApplication.INSTANCE.currentPrescription.value = prescription.copy()
-                                        prescription.copy().apply {
-
-                                            trackType = title
-                                            // 生成报表
-                                            val reportForm = ReportForm()
-                                            reportForm.prescription = this
-                                            reportForm.deviceType = HoloApplication.INSTANCE.deviceId.value!!
-                                            reportForm.workTime = HoloApplication.INSTANCE.nowShowStatus.value!!.workTime
-                                            reportForm.endTime = System.currentTimeMillis()
-                                            reportForm.startTime = reportForm.endTime - HoloApplication.INSTANCE.nowShowStatus.value!!.workTime*1000
-                                            HoloApplication.INSTANCE.nowShowStatus.value?.let { ss ->
-                                                for(i in ss.list){
-                                                    reportForm.newTem(i.upModelTem, i.downModelTem, i.time)
-                                                }
-                                                for(i in ss.pressList){
-                                                    reportForm.newPre(i)
-                                                }
+                                        HoloApplication.INSTANCE.handler.post {
+                                            HoloApplication.INSTANCE.nowShowStatus.value = ShowStatus()
+                                            val prescription = Prescription()
+                                            var title = HoloApplication.INSTANCE.currentPrescription.value!!.trackType
+                                            if(title.isEmpty()){
+                                                title = HoloApplication.INSTANCE.getString(R.string.manual_starting)
                                             }
+                                            BluetoothQueueNew.addAll(DataAdapter.getReadCommandByPrescription({
+                                                HoloApplication.INSTANCE.currentPrescription.postValue(prescription.apply {
+                                                    trackType = title
+                                                    HoloApplication.INSTANCE.nowShowStatus.postValue(ShowStatus())
+                                                })
+                                            }, HoloApplication.INSTANCE.prescriptionSetting.value!!, prescription.apply {
+                                                trackType = title
+                                            }))
 
-
-                                            BluetoothQueueNew.addAll(ConnectionModel.readHistNum {
-                                                val atomLong = AtomicLong(it)
-
-                                                val listener:ConnectionModel.OnReadHistListener = object :ConnectionModel.OnReadHistListener{
-                                                    override fun onRead(time: Long, up: Float, down: Float, pre: Float) {
-                                                        if(time < reportForm.startTime){
-                                                            HoloRetrofit.holoService.uploadData(HoloApplication.INSTANCE.token.value!!, DataAdapter.getReportFormBody(reportForm))
-                                                                    .enqueue(object: Callback<ResponseBody>{
-                                                                        override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                                                                            runCatching {
-                                                                                val s = response.body()!!.string()
-                                                                                val jsonObject = JSONObject(s)
-                                                                                if(jsonObject.getInt("StatusCode") == 200){
-                                                                                    HoloApplication.INSTANCE.handler.post {
-                                                                                        Toast.makeText(HoloApplication.INSTANCE, getString(R.string.report_upload_suc),Toast.LENGTH_SHORT).show()
-                                                                                    }
-                                                                                }else{
-                                                                                    HoloApplication.INSTANCE.handler.post {
-                                                                                        Toast.makeText(HoloApplication.INSTANCE, getString(R.string.report_upload_fal), Toast.LENGTH_SHORT).show()
-                                                                                    }
-                                                                                }
-                                                                            }.onFailure { t ->
-                                                                                t.printStackTrace()
-                                                                                Toast.makeText(HoloApplication.INSTANCE, getString(R.string.report_upload_fal),Toast.LENGTH_SHORT).show()
-                                                                            }
-                                                                        }
-
-                                                                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                                                                            Toast.makeText(HoloApplication.INSTANCE, getString(R.string.report_upload_fal),Toast.LENGTH_SHORT).show()
-                                                                        }
-                                                                    })
-                                                        }else{
-                                                            reportForm.newTem(up, down, time)
-                                                            reportForm.newPre(pre)
-
-                                                            BluetoothQueueNew.addAll(ConnectionModel.readAHist(
-                                                                    atomLong.getAndDecrement(), this
-                                                            ))
-
-                                                        }
-                                                    }
-                                                }
-                                                BluetoothQueueNew.addAll(ConnectionModel.readAHist(
-                                                        atomLong.get(), listener
-                                                ))
-
-
-
-
-
-                                            })
-
-                                            HoloApplication.INSTANCE.currentPrescription.postValue(this)
+                                            BluetoothQueueNew.addAll(ConnectionModel.status())
                                         }
                                     }
-                                }, HoloApplication.INSTANCE.prescriptionSetting.value!!, prescription))
+                                }else{
+                                    HoloApplication.INSTANCE.isRunClick.postValue(false)
+                                    HoloApplication.INSTANCE.nowDeviceRun.postValue(it)
 
+                                    if(!HoloApplication.INSTANCE.isStopClick.value!!){
+                                        // 生成报表
+
+                                        val title = HoloApplication.INSTANCE.currentPrescription.value!!.trackType
+                                        // 同步配方
+                                        val prescription = HoloApplication.INSTANCE.currentPrescription.value!!.copy()
+                                        BluetoothQueueNew.addAll(ConnectionModel.status())
+                                        BluetoothQueueNew.addAll(DataAdapter.getReadCommandByPrescription({
+                                            HoloApplication.INSTANCE.handler.post {
+                                                HoloApplication.INSTANCE.currentPrescription.value = prescription.copy()
+                                                prescription.copy().apply {
+                                                    val nTime = System.currentTimeMillis()
+                                                    BluetoothQueueNew.addAllI(ConnectionModel.readHistNum { num ->
+                                                        Thread{
+                                                            var endTime = nTime
+                                                            val f = num -1
+                                                            if (num > 0) {
+                                                                val an = ConnectionModel.readAHistBlock(
+                                                                    num,
+                                                                    null
+                                                                )
+                                                                if (an.eventType == 0x00E3) {
+                                                                    endTime = an.time
+                                                                }else if (f > 0) {
+                                                                    val an = ConnectionModel.readAHistBlock(
+                                                                        num,
+                                                                        null
+                                                                    )
+                                                                    if (an.eventType == 0x00E3) {
+                                                                        endTime = an.time
+                                                                    }
+                                                                }
+                                                            }
+                                                            trackType = title
+                                                            // 生成报表
+                                                            val reportForm = ReportForm()
+                                                            reportForm.prescription = this
+                                                            reportForm.deviceType = HoloApplication.INSTANCE.deviceId.value!!
+                                                            reportForm.workTime = HoloApplication.INSTANCE.nowShowStatus.value!!.workTime
+                                                            reportForm.endTime = endTime
+                                                            reportForm.startTime = reportForm.endTime - HoloApplication.INSTANCE.nowShowStatus.value!!.workTime*1000
+                                                            HoloApplication.INSTANCE.nowShowStatus.value?.let { ss ->
+                                                                for(i in ss.list){
+                                                                    reportForm.newTem(i.upModelTem, i.downModelTem, i.time)
+                                                                }
+                                                                for(i in ss.pressList){
+                                                                    reportForm.newPre(i)
+                                                                }
+                                                            }
+
+
+                                                            HoloRetrofit.holoService.uploadData(HoloApplication.INSTANCE.token.value!!, DataAdapter.getReportFormBody(reportForm))
+                                                                .enqueue(object: Callback<ResponseBody>{
+                                                                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                                                                        runCatching {
+                                                                            val s = response.body()!!.string()
+                                                                            val jsonObject = JSONObject(s)
+                                                                            if(jsonObject.getInt("StatusCode") == 200){
+                                                                                HoloApplication.INSTANCE.handler.post {
+                                                                                    SPModel.lastReportTime = reportForm.endTime
+                                                                                    Toast.makeText(HoloApplication.INSTANCE, getString(R.string.report_upload_suc),Toast.LENGTH_SHORT).show()
+                                                                                }
+                                                                            }else{
+                                                                                HoloApplication.INSTANCE.handler.post {
+                                                                                    Toast.makeText(HoloApplication.INSTANCE, getString(R.string.report_upload_fal), Toast.LENGTH_SHORT).show()
+                                                                                }
+                                                                            }
+                                                                        }.onFailure { t ->
+                                                                            t.printStackTrace()
+                                                                            Toast.makeText(HoloApplication.INSTANCE, getString(R.string.report_upload_fal),Toast.LENGTH_SHORT).show()
+                                                                        }
+                                                                    }
+
+                                                                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                                                        Toast.makeText(HoloApplication.INSTANCE, getString(R.string.report_upload_fal),Toast.LENGTH_SHORT).show()
+                                                                    }
+                                                                })
+                                                        }.start()
+                                                    })
+
+
+                                                    HoloApplication.INSTANCE.currentPrescription.postValue(this)
+                                                }
+                                            }
+                                        }, HoloApplication.INSTANCE.prescriptionSetting.value!!, prescription))
+                                    }
+                                }
                             }
-                        }
+                            if(it){
+                                delay = 5000
+                                BluetoothQueueNew.addAll(ConnectionModel.status())
+                            }else{
+                                delay = 8000
+                                BluetoothQueueNew.addAll(ConnectionModel.status())
+                            }
+                        })
+                    }.onFailure {
+                        it.printStackTrace()
                     }
-                    if(it){
-                        delay = 5000
-                        BluetoothQueueNew.addAllN(ConnectionModel.status())
+
+
+                    if (!stopFlags){
+                        handler.postDelayed(this, this@BluetoothCheckThread.delay.toLong())
                     }else{
-                        delay = 3000
-                        BluetoothQueueNew.addAllN(ConnectionModel.status())
+                        Looper.myLooper()?.quitSafely()
                     }
-                })
+                }
+            })
 
+            Looper.loop()
 
-                sleep(delay.toLong())
-            }
         }
     }
 

@@ -67,8 +67,6 @@ class OneDialog :Dialog{
     override fun show() {
         super.show()
         window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-
     }
 }
 
