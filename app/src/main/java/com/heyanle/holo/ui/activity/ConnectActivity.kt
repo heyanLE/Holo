@@ -308,13 +308,20 @@ class ConnectActivity :BaseActivity(){
         HoloApplication.INSTANCE.deviceDescribe.observe(this){
             binding.device = it
             if(it.img.isEmpty()){
-                binding.img.setImageResource(R.drawable.holo_small)
+                binding.img.setImageResource(R.drawable.none)
             }else{
                 Glide.with(this).load(it.img).into(binding.img)
             }
         }
 
         binding.btTest.setOnClickListener {
+
+            runOnUiThread{
+                HoloApplication.INSTANCE.connect.value = true
+                val intent = Intent(this@ConnectActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
             HoloApplication.INSTANCE.deviceN.postValue("123")
 
             val map = hashMapOf<String, HashMap<String, String>>()

@@ -1,6 +1,7 @@
 package com.heyanle.holo.ui.activity
 
 import android.content.Intent
+import android.util.Log
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,11 +15,13 @@ import com.heyanle.holo.logic.model.SPModel
 import com.heyanle.holo.net.DataAdapter
 import com.heyanle.holo.net.HoloRetrofit
 import com.heyanle.holo.ui.main.MainActivity
+import com.heyanle.holo.entity.MsgInfo
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.google.gson.Gson
 
 /**
  * Created by HeYanLe on 2021/2/6 0006 15:27.
@@ -44,7 +47,10 @@ class FirstActivity : BaseActivity(){
         // inflate 完成
         setContentView(binding.root)
 
+
+
         if(HoloApplication.INSTANCE.connect.value!!){
+
             val map = hashMapOf<String, HashMap<String, String>>()
             val m = hashMapOf<String, String>()
             m["shibiehao"] = SPModel.deviceId
@@ -57,8 +63,39 @@ class FirstActivity : BaseActivity(){
                         val jsonObject = JSONObject(s)
                         val code = jsonObject.getInt("StatusCode")
                         if(code != 200){
-                            Toast.makeText(this@FirstActivity, getString(R.string.get_device_msg_fal),
-                                Toast.LENGTH_SHORT).show()
+                            val m = hashMapOf<String,HashMap<String, String>>()
+                            val mm = hashMapOf<String, String>()
+                            mm["FType"] = "${SPModel.china}"
+                            m["Data"] = mm
+                            HoloRetrofit.holoService.ad(SPModel.token, m).enqueue(object : Callback<ResponseBody>{
+                                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                                    runCatching {
+                                        val s = response.body()!!.string()
+                                        val jsonObject = JSONObject(s)
+                                        val o = jsonObject.getJSONObject("Data")
+                                        adUrl = o.getString("Url")
+                                        adWebsite = o.getString("WebSite")
+                                    }
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                        overridePendingTransition(0, 0)
+                                    }, DELAY_TIME)
+                                }
+
+                                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                        overridePendingTransition(0, 0)
+                                    }, DELAY_TIME)
+                                }
+                            })
+
+
                             return
                         }
                         if(jsonObject.getString("Data") == "无数据"){
@@ -84,74 +121,342 @@ class FirstActivity : BaseActivity(){
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    val m = hashMapOf<String,HashMap<String, String>>()
-                    val mm = hashMapOf<String, String>()
-                    mm["FType"] = "${SPModel.china}"
-                    m["Data"] = mm
-                    HoloRetrofit.holoService.ad(SPModel.token, m).enqueue(object : Callback<ResponseBody>{
-                        override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                            runCatching {
-                                val s = response.body()!!.string()
-                                val jsonObject = JSONObject(s)
-                                val o = jsonObject.getJSONObject("Data")
-                                adUrl = o.getString("Url")
-                                adWebsite = o.getString("WebSite")
-                            }
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                val intent = Intent(this@FirstActivity, ADActivity::class.java)
-                                startActivity(intent)
-                                finish()
-                                overridePendingTransition(0, 0)
-                            }, DELAY_TIME)
-                        }
 
-                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                val intent = Intent(this@FirstActivity, ADActivity::class.java)
-                                startActivity(intent)
-                                finish()
-                                overridePendingTransition(0, 0)
-                            }, DELAY_TIME)
-                        }
-                    })
+                    if(HoloApplication.INSTANCE.token.value!!.isNotEmpty()){
+                        val map = hashMapOf<String, HashMap<String, String>>()
+                        val m = hashMapOf<String, String>()
+                        m["FType"] = "${LanguageManager.nowIndex}"
+                        map["Data"] = m
+                        HoloRetrofit.holoService.msg(HoloApplication.INSTANCE.token.value!!, map).enqueue(object : Callback<ResponseBody>{
+                            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                                runCatching {
+                                    val s = response.body()!!.string()
+                                    val jsonObject = JSONObject(s)
+
+                                    val code = jsonObject.getInt("StatusCode")
+                                    if(code != 200){
+                                        val m = hashMapOf<String,HashMap<String, String>>()
+                                        val mm = hashMapOf<String, String>()
+                                        mm["FType"] = "${SPModel.china}"
+                                        m["Data"] = mm
+                                        HoloRetrofit.holoService.ad(SPModel.token, m).enqueue(object : Callback<ResponseBody>{
+                                            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                                                runCatching {
+                                                    val s = response.body()!!.string()
+                                                    val jsonObject = JSONObject(s)
+                                                    val o = jsonObject.getJSONObject("Data")
+                                                    adUrl = o.getString("Url")
+                                                    adWebsite = o.getString("WebSite")
+                                                }
+                                                Handler(Looper.getMainLooper()).postDelayed({
+                                                    val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                                    startActivity(intent)
+                                                    finish()
+                                                    overridePendingTransition(0, 0)
+                                                }, DELAY_TIME)
+                                            }
+
+                                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                                Handler(Looper.getMainLooper()).postDelayed({
+                                                    val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                                    startActivity(intent)
+                                                    finish()
+                                                    overridePendingTransition(0, 0)
+                                                }, DELAY_TIME)
+                                            }
+                                        })
+
+
+                                        return
+                                    }
+
+                                    val ms = Gson().fromJson(jsonObject.getJSONObject("Data").toString(), MsgInfo::class.java)
+                                    if(ms.ggwebSize == null){
+                                        val m = hashMapOf<String,HashMap<String, String>>()
+                                        val mm = hashMapOf<String, String>()
+                                        mm["FType"] = "${SPModel.china}"
+                                        m["Data"] = mm
+                                        HoloRetrofit.holoService.ad(SPModel.token, m).enqueue(object : Callback<ResponseBody>{
+                                            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                                                runCatching {
+                                                    val s = response.body()!!.string()
+                                                    val jsonObject = JSONObject(s)
+                                                    val o = jsonObject.getJSONObject("Data")
+                                                    adUrl = o.getString("Url")
+                                                    adWebsite = o.getString("WebSite")
+                                                }
+                                                Handler(Looper.getMainLooper()).postDelayed({
+                                                    val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                                    startActivity(intent)
+                                                    finish()
+                                                    overridePendingTransition(0, 0)
+                                                }, DELAY_TIME)
+                                            }
+
+                                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                                Handler(Looper.getMainLooper()).postDelayed({
+                                                    val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                                    startActivity(intent)
+                                                    finish()
+                                                    overridePendingTransition(0, 0)
+                                                }, DELAY_TIME)
+                                            }
+                                        })
+                                    }
+
+                                    adUrl = ms.url?:adUrl
+                                    adWebsite = ms.ggwebSize?:adWebsite
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                        overridePendingTransition(0, 0)
+                                    }, DELAY_TIME)
+                                }
+                            }
+
+                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                val m = hashMapOf<String,HashMap<String, String>>()
+                                val mm = hashMapOf<String, String>()
+                                mm["FType"] = "${SPModel.china}"
+                                m["Data"] = mm
+                                HoloRetrofit.holoService.ad(SPModel.token, m).enqueue(object : Callback<ResponseBody>{
+                                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                                        runCatching {
+                                            val s = response.body()!!.string()
+                                            val jsonObject = JSONObject(s)
+                                            val o = jsonObject.getJSONObject("Data")
+                                            adUrl = o.getString("Url")
+                                            adWebsite = o.getString("WebSite")
+                                        }
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                            startActivity(intent)
+                                            finish()
+                                            overridePendingTransition(0, 0)
+                                        }, DELAY_TIME)
+                                    }
+
+                                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                            startActivity(intent)
+                                            finish()
+                                            overridePendingTransition(0, 0)
+                                        }, DELAY_TIME)
+                                    }
+                                })
+                            }
+                        })
+                    }
+                    else{
+                        val m = hashMapOf<String,HashMap<String, String>>()
+                        val mm = hashMapOf<String, String>()
+                        mm["FType"] = "${SPModel.china}"
+                        m["Data"] = mm
+                        HoloRetrofit.holoService.ad(SPModel.token, m).enqueue(object : Callback<ResponseBody>{
+                            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                                runCatching {
+                                    val s = response.body()!!.string()
+                                    val jsonObject = JSONObject(s)
+                                    val o = jsonObject.getJSONObject("Data")
+                                    adUrl = o.getString("Url")
+                                    adWebsite = o.getString("WebSite")
+                                }
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                    overridePendingTransition(0, 0)
+                                }, DELAY_TIME)
+                            }
+
+                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                    overridePendingTransition(0, 0)
+                                }, DELAY_TIME)
+                            }
+                        })
+                    }
+
 
 
                 }
             })
 
         }else {
+            Log.i("FXXXXXXXXX",HoloApplication.INSTANCE.token.value!!)
+            if(HoloApplication.INSTANCE.token.value!!.isNotEmpty()){
+                val map = hashMapOf<String, HashMap<String, String>>()
+                val m = hashMapOf<String, String>()
+                m["FType"] = "${LanguageManager.nowIndex}"
+                map["Data"] = m
 
+                HoloRetrofit.holoService.msg(HoloApplication.INSTANCE.token.value!!, map).enqueue(object : Callback<ResponseBody>{
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                        runCatching {
+                            val s = response.body()!!.string()
+                            val jsonObject = JSONObject(s)
 
-            val m = hashMapOf<String,HashMap<String, String>>()
-            val mm = hashMapOf<String, String>()
-            mm["FType"] = "${SPModel.china}"
-            m["Data"] = mm
-            HoloRetrofit.holoService.ad(SPModel.token, m).enqueue(object : Callback<ResponseBody>{
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    runCatching {
-                        val s = response.body()!!.string()
-                        val jsonObject = JSONObject(s)
-                        val o = jsonObject.getJSONObject("Data")
-                        adUrl = o.getString("Url")
-                        adWebsite = o.getString("WebSite")
+                            val code = jsonObject.getInt("StatusCode")
+                            if(code != 200){
+                                val m = hashMapOf<String,HashMap<String, String>>()
+                                val mm = hashMapOf<String, String>()
+                                mm["FType"] = "${SPModel.china}"
+                                m["Data"] = mm
+                                HoloRetrofit.holoService.ad(SPModel.token, m).enqueue(object : Callback<ResponseBody>{
+                                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                                        runCatching {
+                                            val s = response.body()!!.string()
+                                            val jsonObject = JSONObject(s)
+                                            val o = jsonObject.getJSONObject("Data")
+                                            adUrl = o.getString("Url")
+                                            adWebsite = o.getString("WebSite")
+                                        }
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                            startActivity(intent)
+                                            finish()
+                                            overridePendingTransition(0, 0)
+                                        }, DELAY_TIME)
+                                    }
+
+                                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                            startActivity(intent)
+                                            finish()
+                                            overridePendingTransition(0, 0)
+                                        }, DELAY_TIME)
+                                    }
+                                })
+                                return
+                            }
+
+                            val ms = Gson().fromJson(jsonObject.getJSONObject("Data").toString(), MsgInfo::class.java)
+                            if(ms.ggwebSize == null){
+                                val m = hashMapOf<String,HashMap<String, String>>()
+                                val mm = hashMapOf<String, String>()
+                                mm["FType"] = "${SPModel.china}"
+                                m["Data"] = mm
+                                HoloRetrofit.holoService.ad(SPModel.token, m).enqueue(object : Callback<ResponseBody>{
+                                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                                        runCatching {
+                                            val s = response.body()!!.string()
+                                            val jsonObject = JSONObject(s)
+                                            val o = jsonObject.getJSONObject("Data")
+                                            adUrl = o.getString("Url")
+                                            adWebsite = o.getString("WebSite")
+                                        }
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                            startActivity(intent)
+                                            finish()
+                                            overridePendingTransition(0, 0)
+                                        }, DELAY_TIME)
+                                    }
+
+                                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                            startActivity(intent)
+                                            finish()
+                                            overridePendingTransition(0, 0)
+                                        }, DELAY_TIME)
+                                    }
+                                })
+                            }
+
+                            adUrl = ms.url?:adUrl
+                            adWebsite = ms.ggwebSize?:adWebsite
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                                overridePendingTransition(0, 0)
+                            }, DELAY_TIME)
+                        }.onFailure {
+                            it.printStackTrace()
+                        }
                     }
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        val intent = Intent(this@FirstActivity, ADActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                        overridePendingTransition(0, 0)
-                    }, DELAY_TIME)
-                }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        val intent = Intent(this@FirstActivity, ADActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                        overridePendingTransition(0, 0)
-                    }, DELAY_TIME)
-                }
-            })
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        val m = hashMapOf<String,HashMap<String, String>>()
+                        val mm = hashMapOf<String, String>()
+                        mm["FType"] = "${SPModel.china}"
+                        m["Data"] = mm
+                        HoloRetrofit.holoService.ad(SPModel.token, m).enqueue(object : Callback<ResponseBody>{
+                            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                                runCatching {
+                                    val s = response.body()!!.string()
+                                    val jsonObject = JSONObject(s)
+                                    val o = jsonObject.getJSONObject("Data")
+                                    adUrl = o.getString("Url")
+                                    adWebsite = o.getString("WebSite")
+                                }
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                    overridePendingTransition(0, 0)
+                                }, DELAY_TIME)
+                            }
+
+                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                    overridePendingTransition(0, 0)
+                                }, DELAY_TIME)
+                            }
+                        })
+                    }
+                })
+            }
+            else{
+                val m = hashMapOf<String,HashMap<String, String>>()
+                val mm = hashMapOf<String, String>()
+                mm["FType"] = "${SPModel.china}"
+                m["Data"] = mm
+                HoloRetrofit.holoService.ad(SPModel.token, m).enqueue(object : Callback<ResponseBody>{
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                        runCatching {
+                            val s = response.body()!!.string()
+                            val jsonObject = JSONObject(s)
+                            val o = jsonObject.getJSONObject("Data")
+                            adUrl = o.getString("Url")
+                            adWebsite = o.getString("WebSite")
+                        }
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                            overridePendingTransition(0, 0)
+                        }, DELAY_TIME)
+                    }
+
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            val intent = Intent(this@FirstActivity, ADActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                            overridePendingTransition(0, 0)
+                        }, DELAY_TIME)
+                    }
+                })
+            }
 
 
         }

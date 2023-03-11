@@ -314,7 +314,6 @@
                         android:layout_margin="16dp"
                         android:textColor="#666666"
                         android:textSize="15sp"
-                        android:src="@drawable/holo_large"
                         android:layout_width="100dp"
                         android:layout_height="100dp"/>
 

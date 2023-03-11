@@ -385,6 +385,8 @@ class MainActivity : BaseActivity(){
         super.onDestroy()
     }
 
+
+
     fun changeToSetting(){
         binding.viewPager.post {
             binding.viewPager.setCurrentItem(2, true)

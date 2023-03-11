@@ -225,4 +225,7 @@
     <string name="realy_to_clear">Are you sure to clear note?</string>
     <string name="clear_completely">completely</string>
 
+    <string name="tips">Tips</string>
+    <string name="run_tips">Please keep the phone screen bright during operation, \nand check whether the four screws are fully fixed. \nAre you sure to Run the machine?</string>
+
 </resources>

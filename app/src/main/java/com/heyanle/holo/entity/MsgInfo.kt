@@ -22,5 +22,9 @@ class MsgInfo {
     var addTime:String? = null
     @SerializedName("PicID")
     var picId:String? = null
+    @SerializedName("GGWebSite")
+    var ggwebSize: String? = null
+    @SerializedName("Url")
+    var url: String? = null
 
 }

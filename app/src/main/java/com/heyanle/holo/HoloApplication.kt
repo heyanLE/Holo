@@ -144,6 +144,7 @@ class HoloApplication : Application(){
         deviceDescribe.value = DeviceDescribe()
 
         token.value = SPModel.token
+        //token.value = "01130ba2-b06f-4aa9-92e7-ee406336a893"
         deviceId.value = SPModel.deviceIndex
 
         isStopClick.value = false

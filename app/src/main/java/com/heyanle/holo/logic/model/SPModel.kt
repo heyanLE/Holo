@@ -18,7 +18,7 @@ object SPModel {
 
     var addressMap by SP.string("HOLO_ADDRESS_LIST", "{}")
 
-    var token by SP.string("TOKEN","33fd5eb8-f424-4ab2-a315-4a0e70896e70")
+    var token by SP.string("TOKEN","")
 
     var deviceId by SP.string("DEVICE_ID","")
     var deviceIndex by SP.string("DEVICE_INDEX","")

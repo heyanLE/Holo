@@ -175,6 +175,7 @@ class LoginActivity : BaseActivity(){
                         HoloApplication.INSTANCE.userTitle.postValue(name)
 
                         runOnUiThread {
+                            Log.i("LXXXXXX", token)
                             SPModel.token = token
                             SPModel.username = username
                             SPModel.password = password

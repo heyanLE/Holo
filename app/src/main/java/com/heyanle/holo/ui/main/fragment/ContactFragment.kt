@@ -60,7 +60,7 @@ class ContactFragment : PageFragment(R.layout.fragment_contact){
         val m = hashMapOf<String, String>()
         m["FType"] = "${LanguageManager.nowIndex}"
         map["Data"] = m
-        HoloRetrofit.holoService.msg(map).enqueue(object : Callback<ResponseBody>{
+        HoloRetrofit.holoService.msg(HoloApplication.INSTANCE.token.value!!, map).enqueue(object : Callback<ResponseBody>{
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 runCatching {
                     val s = response.body()!!.string()
@@ -68,7 +68,7 @@ class ContactFragment : PageFragment(R.layout.fragment_contact){
 
                     val ms = Gson().fromJson(jsonObject.getJSONObject("Data").toString(), MsgInfo::class.java)
                     binding.msg = ms
-                    Glide.with(requireContext()).load(ms.wechat).error(R.drawable.holo_small).into(binding.we)
+                    Glide.with(requireContext()).load(ms.wechat).into(binding.we)
                 }
             }
 

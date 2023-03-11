@@ -83,7 +83,6 @@ class ADActivity : BaseActivity(), CoroutineScope by MainScope(){
             val intent = Intent(this@ADActivity, LoginActivity::class.java)
             startActivity(intent)
             finish()
-
         }
     }
 

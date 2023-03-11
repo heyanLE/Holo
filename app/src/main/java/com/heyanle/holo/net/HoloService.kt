@@ -12,10 +12,10 @@ interface HoloService {
 
 
     @POST("/api/Delete/Star")
-    fun delete(@Header("Token") token: String,@Body hashMap: HashMap<String, HashMap<String,String>>):Call<ResponseBody>
+    fun delete(@Header("Token") token: String, @Body hashMap: HashMap<String, HashMap<String,String>>):Call<ResponseBody>
 
-    @POST("/api/Get/IndexBody")
-    fun msg(@Body hashMap: HashMap<String, HashMap<String,String>>):Call<ResponseBody>
+    @POST("/api/Get/UserConfig")
+    fun msg(@Header("Token") token: String, @Body hashMap: HashMap<String, HashMap<String,String>>):Call<ResponseBody>
 
     @POST("/api/Get/guanggao")
     fun ad(@Header("Token") token: String,@Body hashMap: HashMap<String, HashMap<String,String>>): Call<ResponseBody>

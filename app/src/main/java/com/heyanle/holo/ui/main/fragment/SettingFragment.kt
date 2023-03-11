@@ -27,6 +27,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.heyanle.holo.ui.dialog.BaseDialog
 
 /**
  * Created by HeYanLe on 2021/2/7 0007 14:52.
@@ -226,45 +227,67 @@ class SettingFragment : PageFragment(R.layout.fragment_setting){
                 return@setOnClickListener
             }
 
-            BluetoothQueueNew.addAllN(DataAdapter.getReadCommandByPrescription(
+            val baseDialog = com.heyanle.holo.ui.dialog.BaseDialog(requireContext())
+            //Log.i("Set","fefefe")
+            baseDialog.show()
+            baseDialog.binding.title.setText(R.string.tips)
+            baseDialog.binding.msg.setText(R.string.run_tips)
+            baseDialog.binding.tvConfirm.setOnClickListener {
+                BluetoothQueueNew.addAllN(DataAdapter.getReadCommandByPrescription(
                     {
                         HoloApplication.INSTANCE.currentPrescription.postValue(prescription)
 
-            },HoloApplication.INSTANCE.prescriptionSetting.value!!, prescription))
+                    },HoloApplication.INSTANCE.prescriptionSetting.value!!, prescription))
 
 
-            HoloApplication.INSTANCE.isRunClick.value = true
-            HoloApplication.INSTANCE.nowShowStatus.value = ShowStatus()
+                HoloApplication.INSTANCE.isRunClick.value = true
+                HoloApplication.INSTANCE.nowShowStatus.value = ShowStatus()
 
 
-            activityVM.messenger?.send(Message().apply {
-                what = BluetoothService.MSG_NEW_COMMAND
-                obj = ConnectionModel.run()
-            })
-            activityVM.messenger?.send(Message().apply {
-                what = BluetoothService.MSG_NEW_COMMAND
-                obj = ConnectionModel.status()
-            })
+                activityVM.messenger?.send(Message().apply {
+                    what = BluetoothService.MSG_NEW_COMMAND
+                    obj = ConnectionModel.run()
+                })
+                activityVM.messenger?.send(Message().apply {
+                    what = BluetoothService.MSG_NEW_COMMAND
+                    obj = ConnectionModel.status()
+                })
 
 
-            activityVM.messenger?.send(Message().apply {
-                what = BluetoothService.MSG_NEW_COMMAND
-                obj = ConnectionModel.check {
-                    if(it){
-                        HoloApplication.INSTANCE.handler.post {
-                            Toast.makeText(requireContext(),getString(R.string.start_sus),Toast.LENGTH_SHORT).show()
+                activityVM.messenger?.send(Message().apply {
+                    what = BluetoothService.MSG_NEW_COMMAND
+                    obj = ConnectionModel.check {
+                        if(it){
+                            HoloApplication.INSTANCE.handler.post {
+                                Toast.makeText(requireContext(),getString(R.string.start_sus),Toast.LENGTH_SHORT).show()
+                            }
+                        }else{
+                            HoloApplication.INSTANCE.isRunClick.postValue(false)
                         }
-                    }else{
-                        HoloApplication.INSTANCE.isRunClick.postValue(false)
                     }
-                }
-            })
-            Toast.makeText(requireContext(), R.string.run_success,Toast.LENGTH_SHORT).show()
+                })
+                Toast.makeText(requireContext(), R.string.run_success,Toast.LENGTH_SHORT).show()
+
+                HoloApplication.INSTANCE.isClick.postValue(true)
+                HoloApplication.INSTANCE.handler.postDelayed({
+                    HoloApplication.INSTANCE.isClick.postValue(false)
+                }, 2000)
+                baseDialog.dismiss()
+            }
+            baseDialog.binding.tvCancel.setOnClickListener {
+                baseDialog.dismiss()
+            }
+
 
             HoloApplication.INSTANCE.isClick.postValue(true)
             HoloApplication.INSTANCE.handler.postDelayed({
                 HoloApplication.INSTANCE.isClick.postValue(false)
             }, 2000)
+            //baseDialog.dismiss()
+
+
+
+
 
         }
 

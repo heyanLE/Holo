@@ -36,7 +36,7 @@
         <activity android:name=".ui.activity.ADActivity"/>
         <activity android:name=".ui.activity.LoginActivity"/>
         <activity android:name=".ui.activity.ConnectActivity"/>
-        <activity android:name=".ui.main.MainActivity" android:launchMode="singleTask"/>
+        <activity android:name=".ui.main.MainActivity" android:launchMode="singleTask" />
         <activity android:name=".ui.main.activity.LanguageTimeZoneActivity"/>
         <activity android:name=".ui.main.activity.LanguageActivity"/>
         <activity android:name=".ui.main.activity.DeviceTypeActivity"/>

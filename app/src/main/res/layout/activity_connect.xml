@@ -37,7 +37,7 @@
 
                 <ImageView
                     android:id="@+id/img"
-                    android:src="@drawable/holo_small"
+                    android:src="@drawable/none"
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"/>
