@@ -601,7 +601,7 @@ class SettingFragment : PageFragment(R.layout.fragment_setting){
         prescription.preheatingTemperature = binding.inputBoxPreheatingTemperature.getNum().toFloat()
         prescription.preheatingSoakingTime = binding.inputBoxPreheatingSoakingTime.getNum()
         prescription.soakingTime = binding.inputBoxSoakingTime.getNum()
-        SPModel.trackType = binding.etTrackType.toString()
+        SPModel.trackType = binding.etTrackType.text.toString()
     }
 
 
